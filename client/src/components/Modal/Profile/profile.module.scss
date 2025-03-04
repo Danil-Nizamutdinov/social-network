@@ -1,0 +1,25 @@
+@use "@src/style/vars.scss" as *;
+
+.profile_wrapper {
+  position: relative;
+  @media (min-width: $desktop) {
+    width: 1240px;
+    margin: 0 auto;
+  }
+}
+
+.profile {
+  position: absolute;
+  width: 280px;
+  background: var(--background-color-popup);
+  border-radius: 7px;
+  right: 15px;
+  top: 50px;
+  padding: 20px 20px;
+  @media (min-width: $desktop) {
+    right: 0;
+  }
+  @media (min-width: 360px) {
+    width: 340px;
+  }
+}

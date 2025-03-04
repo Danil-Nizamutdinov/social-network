@@ -1,0 +1,14 @@
+.actions_wrapper {
+  display: flex;
+  margin-top: 15px;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  p {
+    margin-left: 5px;
+    font-size: 14px;
+  }
+}

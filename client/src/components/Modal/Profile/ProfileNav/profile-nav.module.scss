@@ -1,0 +1,13 @@
+.nav {
+  & button {
+    display: block;
+    margin-top: 15px;
+    font-size: 13px;
+    transition: 0.2s ease;
+    @media (hover: hover) {
+      &:hover {
+        color: var(--secondary-light-blue);
+      }
+    }
+  }
+}

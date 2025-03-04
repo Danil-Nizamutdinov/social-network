@@ -1,0 +1,20 @@
+.message_active {
+  align-self: flex-end;
+  background: #2b5278;
+}
+
+.message {
+  background: #182533;
+}
+
+.message_box {
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 7px;
+  max-width: 70%;
+  height: auto;
+  word-wrap: break-word;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

@@ -1,0 +1,32 @@
+.link {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  transition: 0.2s ease;
+  @media (hover: hover) {
+    &:hover {
+      background: var(--secondary-dark-blue);
+      border-radius: 7px;
+    }
+  }
+}
+
+.chat {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 35px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.last_message {
+  color: var(--gray);
+  margin-top: 5px;
+}
+
+.date {
+  color: var(--gray);
+}

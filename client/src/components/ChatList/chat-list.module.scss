@@ -1,0 +1,8 @@
+@use "@src/style/vars.scss" as *;
+
+.chat_list {
+  margin-top: 10px;
+  @media (min-width: $desktop) {
+    margin: 0;
+  }
+}

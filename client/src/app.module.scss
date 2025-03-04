@@ -1,0 +1,15 @@
+@use "./style/vars.scss" as *;
+
+.container {
+  @media (min-width: $desktop) {
+    width: 1240px;
+    margin: 0 auto;
+  }
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  column-gap: 15px;
+  margin-top: 20px;
+}

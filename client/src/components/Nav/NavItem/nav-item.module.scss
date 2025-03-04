@@ -1,0 +1,27 @@
+.link {
+  position: relative;
+  display: block;
+  transition: 0.3s ease;
+  padding: 8px 20px;
+  width: 90%;
+  @media (hover: hover) {
+    &:hover {
+      background: var(--secondary-dark-blue);
+      border-top-right-radius: 7px;
+      border-bottom-right-radius: 7px;
+    }
+  }
+}
+
+.link.active {
+  color: var(--secondary-light-blue);
+  font-weight: 600;
+}
+
+.link_item {
+  display: flex;
+  align-items: center;
+  & img {
+    margin-right: 10px;
+  }
+}

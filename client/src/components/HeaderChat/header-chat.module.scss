@@ -1,0 +1,42 @@
+@use "@src/style/vars.scss" as *;
+
+.wrapper {
+  position: relative;
+  height: 55px;
+}
+
+.header_message {
+  position: absolute;
+  padding: 0 20px;
+  width: 100%;
+  top: 0;
+  height: 55px;
+  background: var(--background-color-popup);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @media (min-width: $desktop) {
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+  }
+}
+
+.header_item {
+  display: flex;
+  align-items: center;
+}
+
+.ava {
+  width: 35px;
+  border-radius: 50%;
+}
+
+.login {
+  font-size: 14px;
+  margin-left: 7px;
+}
+
+.button_text {
+  color: var(--primary-red);
+}

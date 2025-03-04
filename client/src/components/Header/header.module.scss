@@ -1,0 +1,41 @@
+@use "@src/style/vars.scss" as *;
+
+.header_wrapper {
+  height: 55px;
+}
+
+.header {
+  position: fixed;
+  inset: 0;
+  height: 55px;
+  background: var(--background-color-popup);
+  display: flex;
+  z-index: 1;
+  .header_container {
+    margin: 0 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media (min-width: $desktop) {
+      width: 1240px;
+      margin: 0 auto;
+    }
+  }
+}
+
+.header_item {
+  display: flex;
+  align-items: center;
+}
+
+.last {
+  margin-left: 15px;
+}
+
+.img_box {
+  & img {
+    border-radius: 50%;
+  }
+}

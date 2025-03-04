@@ -1,0 +1,22 @@
+.video_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 14px;
+}
+.views {
+  color: #889baf;
+  font-size: 11px;
+}
+
+.description {
+  margin-top: 15px;
+  display: none;
+}
+
+.active {
+  display: block;
+}

@@ -1,0 +1,25 @@
+@use "@src/style/vars.scss" as *;
+
+.message_send {
+  position: absolute;
+  background: var(--secondary-blue);
+  width: 100%;
+  height: 55px;
+  bottom: -55px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media (min-width: $desktop) {
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+  }
+}
+
+.input {
+  width: 75%;
+}
+
+.send_img {
+  margin-left: 10px;
+}

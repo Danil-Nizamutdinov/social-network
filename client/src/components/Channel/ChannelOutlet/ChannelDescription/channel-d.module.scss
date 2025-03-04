@@ -1,0 +1,17 @@
+@use "@src/style/vars.scss" as *;
+
+.description {
+  margin-bottom: 20px;
+}
+
+.description_wrapper {
+  background: var(--secondary-blue);
+  padding: 20px;
+  @media (min-width: $desktop) {
+    border-radius: 7px;
+  }
+}
+
+.button {
+  padding: 20px;
+}

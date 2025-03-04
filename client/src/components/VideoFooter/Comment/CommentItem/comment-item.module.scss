@@ -1,0 +1,23 @@
+.comment {
+  display: flex;
+  margin-top: 15px;
+}
+
+.img_box {
+  & img {
+    border-radius: 50%;
+  }
+}
+
+.comment_content {
+  margin-left: 15px;
+  & h1 {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+  .date {
+    font-size: 10px;
+    margin-bottom: 7px;
+    color: var(--secondary-gray);
+  }
+}

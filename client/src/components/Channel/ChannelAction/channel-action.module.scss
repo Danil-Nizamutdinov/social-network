@@ -1,0 +1,40 @@
+.action {
+  margin: 20px 0;
+  & button {
+    margin-top: 15px;
+    width: 100%;
+  }
+  @media (min-width: 500px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    & button {
+      width: auto;
+    }
+  }
+}
+
+.actions_owner {
+  @media (min-width: 500px) {
+    & button {
+      margin-left: 15px;
+    }
+  }
+}
+
+.channel_info {
+  display: flex;
+  align-items: center;
+  .channel_info_text {
+    margin-left: 10px;
+    & p {
+      font-size: 10px;
+      color: #889baf;
+      margin-top: 5px;
+    }
+  }
+  .img {
+    border-radius: 50%;
+    width: 56px;
+  }
+}

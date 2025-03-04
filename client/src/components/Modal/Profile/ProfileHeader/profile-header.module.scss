@@ -1,0 +1,25 @@
+.profile_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  border-bottom: 1px solid var(--background-button-disabled);
+  padding-bottom: 20px;
+}
+.info {
+  display: flex;
+  align-items: center;
+}
+
+.ava {
+  width: 56px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.login {
+  margin-bottom: 5px;
+}
+
+.email {
+  color: var(--gray);
+}

@@ -1,0 +1,21 @@
+:root {
+  --primary-white: #fff;
+  --primary-blue: #14191f;
+  --primary-gray: #a7b4c4;
+  --primary-red: #ff4242;
+  --gray: #889baf;
+
+  --primary-light-blue: #1eabe9;
+
+  --secondary-light-blue: #00a1e7;
+  --secondary-blue: #1c232b;
+  --secondary-dark-blue: #29333d;
+  --secondary-gray: #5a6877;
+
+  --background-color: var(--primary-blue);
+  --background-button-disabled: #212932;
+  --button-disabled-color: var(--secondary-gray);
+  --background-color-popup: var(--secondary-blue);
+  --background-color-popup2: var(--secondary-dark-blue);
+  --font-color: var(--primary-white);
+}

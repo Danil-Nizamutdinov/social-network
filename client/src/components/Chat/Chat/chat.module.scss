@@ -1,0 +1,32 @@
+@use "@src/style/vars.scss" as *;
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    background: rgba(148, 148, 148, 0.5);
+  }
+  @media (min-width: $desktop) {
+    border: 2px solid var(--secondary-blue);
+  }
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  align-items: flex-start;
+  height: calc(100vh - 110px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  @media (min-width: $desktop) {
+    height: calc(100vh - 250px);
+  }
+}

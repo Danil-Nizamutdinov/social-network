@@ -4,6 +4,7 @@
   transition: 0.3s ease;
   padding: 8px 20px;
   width: 90%;
+  color: var(--font-color);
   @media (hover: hover) {
     &:hover {
       background: var(--secondary-dark-blue);

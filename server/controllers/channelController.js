@@ -45,7 +45,6 @@ class ChannelController {
   async updateDescription(req, res, next) {
     try {
       const { channelId, description } = req.body;
-      // const channel = await Channel.findByPk(channelId);
       const channel = await channelService.getChannel(channelId);
       if (!channel) return res.json({ message: "не найден" });
       channel.description = description;

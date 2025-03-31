@@ -12,7 +12,7 @@ const VideoActionsContainer: React.FC<{ video: IVideo }> = ({ video }) => {
         description={video.description}
         createdAt={video.createdAt}
       />
-      <VideoActions like={video.like} dislike={video.dislike} />
+      <VideoActions likeCounter={video.likeCounter} />
     </div>
   );
 };

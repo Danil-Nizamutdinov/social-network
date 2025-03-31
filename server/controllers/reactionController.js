@@ -1,86 +1,42 @@
-const { Reaction } = require("../models/models");
-const reactionService = require("../service/reactionService");
+const subscriptionsService = require("../service/subscriptionsService");
 
 class ReactionController {
-  async addReaction(req, res, next) {
+  async subscribe(req, res, next) {
     try {
-      const { type, contentId, userId, emotion } = req.body;
+      const { userId, channelId } = req.body;
+      const subscribeInfo = await subscriptionsService.subscribe(
+        userId,
+        channelId
+      );
 
-      const parsedContentId = Number(contentId);
-      const parsedUserId = Number(userId);
-      const parsedEmotion = Number(emotion);
-
-      const reaction = await Reaction.findOne({
-        where: { type, contentId: parsedContentId, userId: parsedUserId },
-      });
-
-      if (!reaction) {
-        const newReaction = await Reaction.create({
-          type,
-          contentId: parsedContentId,
-          userId: parsedUserId,
-          emotion: parsedEmotion,
-        });
-        const r = await reactionService.updateReaction(
-          type,
-          parsedContentId,
-          parsedEmotion,
-          1
-        );
-        return res.json({ newReaction, r });
-      }
-
-      if (reaction.emotion === parsedEmotion) {
-        const r = await reactionService.updateReaction(
-          type,
-          parsedContentId,
-          parsedEmotion,
-          -1
-        );
-        await reaction.destroy();
-        return res.json({ reaction, r });
-      }
-
-      if (reaction.emotion !== parsedEmotion) {
-        const oldEmotionValue = reaction.emotion;
-        await reactionService.updateReaction(
-          type,
-          parsedContentId,
-          parsedEmotion,
-          1
-        );
-        await reactionService.updateReaction(
-          type,
-          parsedContentId,
-          oldEmotionValue,
-          -1
-        );
-        reaction.emotion = parsedEmotion;
-        await reaction.save();
-        return res.json(reaction);
-      }
+      return res.json(subscribeInfo);
     } catch (e) {
       next(e);
     }
   }
-  async getReaction(req, res, next) {
+  async unsubscribe(req, res, next) {
     try {
-      const { type, contentId, userId } = req.query;
-      const reaction = await Reaction.findOne({
-        where: { type, contentId, userId },
-      });
-      return res.json(reaction);
+      const { userId, channelId } = req.body;
+      const subscribeInfo = await subscriptionsService.unsubscribe(
+        userId,
+        channelId
+      );
+      return res.json(subscribeInfo);
     } catch (e) {
       next(e);
     }
   }
-  async getReactions(req, res, next) {
+  async getUserSubscription(req, res, next) {
     try {
-      const { userId, type } = req.query;
-
-      const reactions = await Reaction.findAll({ where: { userId, type } });
-
-      return res.json(reactions);
+      const { userId, channelId } = req.query;
+      const userSubscription = await subscriptionsService.findSubscription(
+        userId,
+        channelId
+      );
+      if (!userSubscription) {
+        return res.json({ isSubscribe: false });
+      }
+      return res.json({ isSubscribe: true });
     } catch (e) {
       next(e);
     }

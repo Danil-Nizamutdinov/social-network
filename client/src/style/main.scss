@@ -7,7 +7,6 @@
   box-sizing: border-box;
   font-size: 12px;
   font-family: "Inter", serif;
-  color: var(--font-color);
   @media (min-width: 1440px) {
     font-size: 14px;
   }
@@ -25,12 +24,18 @@ img {
 input {
   background: none;
   border: none;
+  color: var(--font-color);
 }
 
 button {
   background: none;
   border: none;
   cursor: pointer;
+  color: var(--font-color);
+}
+
+textarea {
+  color: var(--font-color);
 }
 
 h1 {

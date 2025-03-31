@@ -45,8 +45,7 @@ const Video = sequelize.define("video", {
   title: { type: DataTypes.STRING },
   preview: { type: DataTypes.STRING },
   video: { type: DataTypes.STRING },
-  like: { type: DataTypes.INTEGER },
-  dislike: { type: DataTypes.INTEGER },
+  likeCounter: { type: DataTypes.INTEGER },
   description: { type: DataTypes.STRING },
 });
 
@@ -57,21 +56,25 @@ const Comment = sequelize.define("comment", {
   dislike: { type: DataTypes.INTEGER },
 });
 
-const Reaction = sequelize.define("reaction", {
+const VideoReaction = sequelize.define("VideoReaction", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   userId: { type: DataTypes.INTEGER, allowNull: false },
-  contentId: { type: DataTypes.INTEGER, allowNull: false },
-  emotion: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      isIn: [[0, 1]],
-    },
-  },
-  type: {
-    type: DataTypes.ENUM("video", "comment", "channel"),
-    allowNull: false,
-  },
+  videoId: { type: DataTypes.INTEGER, allowNull: false },
+  reactionType: { type: DataTypes.ENUM("like", "dislike"), allowNull: false },
+});
+
+const CommentReaction = sequelize.define("CommentReaction", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  userId: { type: DataTypes.INTEGER, allowNull: false },
+  commentId: { type: DataTypes.INTEGER, allowNull: false },
+  reactionType: { type: DataTypes.ENUM("like", "dislike"), allowNull: false },
+});
+
+const UserSubscriptions = sequelize.define("UserSubscriptions", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  userId: { type: DataTypes.INTEGER, allowNull: false },
+  channelId: { type: DataTypes.INTEGER, allowNull: false },
+  reactionType: { type: DataTypes.BOOLEAN, allowNull: false },
 });
 
 User.hasOne(Token);
@@ -104,5 +107,7 @@ module.exports = {
   Channel,
   Video,
   Comment,
-  Reaction,
+  VideoReaction,
+  CommentReaction,
+  UserSubscriptions,
 };

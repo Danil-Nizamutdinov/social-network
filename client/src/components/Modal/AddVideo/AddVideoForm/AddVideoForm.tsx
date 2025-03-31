@@ -45,6 +45,7 @@ const AddVideoForm: React.FC = () => {
       imgFile,
     });
     await addVideo(formData);
+    dispatch(toggleFalse());
   };
 
   if (isLoading) return <Loading />;

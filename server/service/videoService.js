@@ -1,18 +1,31 @@
 const { Video, Channel, Comment, User } = require("../models/models");
 
 class VideoService {
+  async updateLikeCounter(videoId, num, transaction) {
+    await Video.update(
+      {
+        likeCounter: Sequelize.literal(`likeCounter + ${num}`),
+      },
+      {
+        where: { id: videoId },
+        transaction,
+      }
+    );
+  }
   async createVideo(channelId, title, previewName, description, fileName) {
     const parsedChannelId = Number(channelId);
-
+    console.log(channelId, title, previewName, description, fileName);
     const videoData = await Video.create({
       channelId: parsedChannelId,
       title,
       preview: previewName,
       video: fileName,
-      like: 0,
-      dislike: 0,
+      likeCounter: 0,
       description,
     });
+
+    console.log(videoData);
+
     return videoData;
   }
   async getVideo(videoId) {

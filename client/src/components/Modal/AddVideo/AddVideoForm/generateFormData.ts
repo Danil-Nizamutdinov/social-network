@@ -7,7 +7,7 @@ interface IArg {
 }
 
 const generateFormData = (data: IArg): FormData => {
-  const formData = new FormData();
+  const formData: FormData = new FormData();
   formData.append("channelId", `${data.channelId}`);
   formData.append("title", data.title);
   formData.append("description", data.description);

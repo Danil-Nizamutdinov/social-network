@@ -1,7 +1,7 @@
 import { baseUrl } from "@src/vars";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { VideosResponse, VideoResponse } from "@src/types/main";
-import axiosBaseQuery, { axiosQueryWithCheckAuth } from "./axiosBaseQuery";
+import axiosBaseQuery from "./axiosBaseQuery";
 
 interface GetVideosArg {
   page: number;
@@ -11,6 +11,7 @@ interface GetVideosArg {
 const videoApi = createApi({
   reducerPath: "videoApi",
   baseQuery: axiosBaseQuery({ baseUrl }),
+  tagTypes: ["Post"],
   endpoints: (build) => ({
     getVideos: build.query<VideosResponse, GetVideosArg>({
       query: ({ page, channelId }) => ({
@@ -22,6 +23,7 @@ const videoApi = createApi({
           channelId,
         },
       }),
+      providesTags: () => ["Post"],
     }),
     getVideo: build.query<VideoResponse, number>({
       query: (videoId) => ({
@@ -32,13 +34,13 @@ const videoApi = createApi({
         },
       }),
     }),
-    addVideo: build.mutation<any, any>({
+    addVideo: build.mutation<void, FormData>({
       query: (data) => ({
-        ...axiosQueryWithCheckAuth({ baseUrl }),
         url: "video/video",
         method: "post",
-        body: data,
+        data,
       }),
+      invalidatesTags: ["Post"],
     }),
   }),
 });

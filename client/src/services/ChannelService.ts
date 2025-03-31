@@ -15,9 +15,15 @@ interface GetChannelByUserId {
 
 type GetChannelArg = GetChannelById | GetChannelByUserId;
 
+interface UpdateDescriptionArg {
+  channelId: number;
+  description: string;
+}
+
 const channelApi = createApi({
   reducerPath: "ChannelApi",
   baseQuery: axiosBaseQuery({ baseUrl }),
+  tagTypes: ["Post"],
   endpoints: (build) => ({
     getChannel: build.query<IChannel, GetChannelArg>({
       query: ({ channelId, userId }) => ({
@@ -28,10 +34,19 @@ const channelApi = createApi({
           userId,
         },
       }),
+      providesTags: () => ["Post"],
+    }),
+    updateDescription: build.mutation<void, UpdateDescriptionArg>({
+      query: (data) => ({
+        url: "channel/description",
+        method: "POST",
+        data,
+      }),
+      invalidatesTags: ["Post"],
     }),
   }),
 });
 
-export const { useGetChannelQuery } = channelApi;
+export const { useGetChannelQuery, useUpdateDescriptionMutation } = channelApi;
 
 export default channelApi;

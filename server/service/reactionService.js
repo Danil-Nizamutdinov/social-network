@@ -1,32 +1,75 @@
-const { Video, Comment } = require("../models/models");
+const { User, Video, VideoReaction } = require("../models/models");
+const ApiError = require("../exceptions/apiError");
+const { updateLikeCounter } = require("./videoService");
 
 class ReactionService {
-  async updateReaction(type, contentId, emotion, count) {
-    const Model = this.getModel(type);
-    if (!Model) throw new Error("Неверный тип контента");
-
-    const content = await Model.findOne({ where: { id: contentId } });
-    if (!content) throw new Error("Контент не найден");
-
-    if (emotion === 1) {
-      content.like += count;
+  async validateUserAndVideo(userId, videoId) {
+    const user = await User.findByPk(userId);
+    const video = await Video.findByPk(videoId);
+    if (!user || !video) {
+      throw ApiError.BadRequest("Пользователя или видео не найдено");
     }
-    if (emotion === 0) {
-      content.dislike += count;
-    }
-
-    await content.save();
-    return content;
+    return true;
   }
-  getModel(type) {
-    switch (type) {
-      case "video":
-        return Video;
-      case "comment":
-        return Comment;
-      default:
-        return;
+
+  async findReaction(userId, videoId) {
+    return await VideoReaction.findOne({
+      where: { userId, videoId },
+    });
+  }
+
+  async addReaction(userId, videoId, reactionType) {
+    const transaction = await Sequelize.transaction();
+
+    await this.validateUserAndVideo(userId, videoId);
+
+    const userReaction = await this.findReaction(userId, channelId);
+
+    if (!userReaction) {
+      const videoReaction = await VideoReaction.create(
+        {
+          userId,
+          videoId,
+          reactionType,
+        },
+        { transaction }
+      );
+
+      await transaction.commit();
+      return { reactionType: videoReaction.reactionType };
     }
+
+    const previousReactionType = userReaction.reactionType;
+
+    if (previousReactionType === reactionType) {
+      userReaction.destroy({ transaction });
+      await transaction.commit();
+      return { reactionType: userReaction.reactionType };
+    }
+
+    userReaction.reactionType = reactionType;
+    await userReaction.save({ transaction });
+
+    let num = 0;
+    if (previousReactionType === "like" && reactionType === "dislike") {
+      num = -2;
+    } else if (previousReactionType === "dislike" && reactionType === "like") {
+      num = 2;
+    } else if (previousReactionType === "like" && reactionType === "like") {
+      num = -1;
+    } else if (
+      previousReactionType === "dislike" &&
+      reactionType === "dislike"
+    ) {
+      num = 1;
+    }
+
+    if (num !== 0) {
+      await updateLikeCounter(videoId, num, transaction);
+    }
+
+    await transaction.commit();
+    return { reactionType: userReaction.reactionType };
   }
 }
 

@@ -1,11 +1,11 @@
 import { baseUrl } from "@src/vars";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { IChat } from "@src/types/main";
-import { axiosQueryWithCheckAuth } from "./axiosBaseQuery";
+import axiosBaseQuery from "./axiosBaseQuery";
 
 const chatApi = createApi({
   reducerPath: "ChatApi",
-  baseQuery: axiosQueryWithCheckAuth({ baseUrl }),
+  baseQuery: axiosBaseQuery({ baseUrl }),
   endpoints: (build) => ({
     getChats: build.query<IChat[], number>({
       query: (userId) => ({

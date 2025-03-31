@@ -26,9 +26,8 @@ export interface IVideo {
   channelId: number;
   createdAt: string;
   description: string;
-  dislike: number;
   id: number;
-  like: number;
+  likeCounter: number;
   preview: string;
   title: string;
   updatedAt: string;

@@ -1,4 +1,4 @@
-const { Channel, Video, User } = require("../models/models");
+const { Channel } = require("../models/models");
 
 class ChannelService {
   async createChannel(userId, login) {
@@ -24,6 +24,22 @@ class ChannelService {
         id: channelId,
       },
     });
+    return channel;
+  }
+
+  async updateSubscribers(channelId, increment = true) {
+    const channel = await Channel.findOne({
+      where: {
+        id: channelId,
+      },
+    });
+
+    if (!channel) {
+      throw new Error("Channel not found");
+    }
+
+    channel.subscribers += increment ? 1 : -1;
+    await channel.save();
     return channel;
   }
 }

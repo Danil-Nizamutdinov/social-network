@@ -6,27 +6,36 @@ import {
   useGetVideoQuery,
   useGetVideosQuery,
 } from "@src/services/VideoService";
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import VideoList from "@src/components/VideoList/VideoList";
+import PaginationBar from "@src/components/PaginationBar/PaginationBar";
 
 const VideoPage: React.FC = () => {
   const { id } = useParams();
-  const { data, isLoading } = useGetVideoQuery(Number(id));
+  const [page, setPage] = useState<number>(1);
+  const { data, isLoading, refetch } = useGetVideoQuery(Number(id));
   const { data: res, isLoading: isLoadingVideos } = useGetVideosQuery({
-    page: 1,
+    page,
   });
   if (isLoading || isLoadingVideos) return <Loading />;
   return (
     <div>
-      <Header />
+      <Header url="video" />
       {data && (
         <>
           <Player url={data.video.video} />
-          <VideoFooter data={data} />
+          <VideoFooter data={data} refetch={refetch} />
         </>
       )}
       {res && <VideoList videos={res.videos} />}
+      {res && (
+        <PaginationBar
+          totalPages={res?.totalPages}
+          page={page}
+          setPage={setPage}
+        />
+      )}
     </div>
   );
 };

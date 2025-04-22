@@ -8,6 +8,12 @@ interface GetVideosArg {
   channelId?: number;
 }
 
+interface AddCommentArg {
+  userId: number;
+  videoId: number;
+  content: string;
+}
+
 const videoApi = createApi({
   reducerPath: "videoApi",
   baseQuery: axiosBaseQuery({ baseUrl }),
@@ -18,7 +24,7 @@ const videoApi = createApi({
         url: "video/videos",
         method: "get",
         params: {
-          limit: 9,
+          limit: 12,
           page,
           channelId,
         },
@@ -34,6 +40,17 @@ const videoApi = createApi({
         },
       }),
     }),
+    searchVideos: build.query<VideosResponse, string>({
+      query: (title) => ({
+        url: "video/search",
+        method: "get",
+        params: {
+          title,
+          page: 1,
+          limit: 12,
+        },
+      }),
+    }),
     addVideo: build.mutation<void, FormData>({
       query: (data) => ({
         url: "video/video",
@@ -42,10 +59,22 @@ const videoApi = createApi({
       }),
       invalidatesTags: ["Post"],
     }),
+    addComment: build.mutation<any, AddCommentArg>({
+      query: (data) => ({
+        url: "comment/comment",
+        method: "post",
+        data,
+      }),
+    }),
   }),
 });
 
-export const { useGetVideosQuery, useGetVideoQuery, useAddVideoMutation } =
-  videoApi;
+export const {
+  useGetVideosQuery,
+  useGetVideoQuery,
+  useAddVideoMutation,
+  useAddCommentMutation,
+  useSearchVideosQuery,
+} = videoApi;
 
 export default videoApi;

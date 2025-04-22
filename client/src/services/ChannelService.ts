@@ -44,9 +44,21 @@ const channelApi = createApi({
       }),
       invalidatesTags: ["Post"],
     }),
+    updateBackground: build.mutation<void, FormData>({
+      query: (data) => ({
+        url: "channel/background",
+        method: "POST",
+        data,
+      }),
+      invalidatesTags: ["Post"],
+    }),
   }),
 });
 
-export const { useGetChannelQuery, useUpdateDescriptionMutation } = channelApi;
+export const {
+  useGetChannelQuery,
+  useUpdateDescriptionMutation,
+  useUpdateBackgroundMutation,
+} = channelApi;
 
 export default channelApi;

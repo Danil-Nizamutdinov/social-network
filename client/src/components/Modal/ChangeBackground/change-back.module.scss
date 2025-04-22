@@ -1,0 +1,41 @@
+@use "@src/style/vars.scss" as *;
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--background-color-popup2);
+  padding: 20px;
+  @media (min-width: $mobile) {
+    width: 375px;
+    height: auto;
+    border-radius: 7px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form_item {
+  margin-top: 20px;
+  & button {
+    margin-right: 15px;
+  }
+}
+
+.file_input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px dashed var(--secondary-light-blue);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}

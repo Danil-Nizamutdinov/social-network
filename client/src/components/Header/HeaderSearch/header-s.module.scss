@@ -1,0 +1,15 @@
+.header_search {
+  position: relative;
+  & input {
+    padding-left: 15px;
+    padding-right: 45px;
+    background: #29333d;
+    border: 0;
+  }
+  & img {
+    position: absolute;
+    top: 8px;
+    right: 15px;
+    cursor: pointer;
+  }
+}

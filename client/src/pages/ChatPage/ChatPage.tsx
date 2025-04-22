@@ -16,7 +16,7 @@ const ChatPage: React.FC = () => {
   if (!user) return <Loading />;
   return (
     <div>
-      {isDesktop && <Header />}
+      {isDesktop && <Header url="chats" />}
       <HeaderChat userId={user.id} chatId={Number(id)} />
       <ChatContainer name={user.login} room={id} />
     </div>

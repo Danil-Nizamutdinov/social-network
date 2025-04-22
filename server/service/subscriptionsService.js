@@ -1,5 +1,6 @@
 const { User, Channel, UserSubscriptions } = require("../models/models");
 const ApiError = require("../exceptions/apiError");
+const { updateSubscribers } = require("./channelService");
 
 class SubscriptionsService {
   async validateUserAndChannel(userId, channelId) {
@@ -31,6 +32,8 @@ class SubscriptionsService {
       reactionType: true,
     });
 
+    await updateSubscribers(channelId, true);
+
     return { isSubscribe: true };
   }
 
@@ -43,6 +46,8 @@ class SubscriptionsService {
     }
 
     await userSubscription.destroy();
+
+    await updateSubscribers(channelId, false);
     return { isSubscribe: false };
   }
 }

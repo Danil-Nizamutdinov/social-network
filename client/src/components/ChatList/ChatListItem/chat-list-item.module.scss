@@ -3,6 +3,7 @@
   justify-content: space-between;
   padding: 10px 20px;
   transition: 0.2s ease;
+  color: var(--font-color);
   @media (hover: hover) {
     &:hover {
       background: var(--secondary-dark-blue);

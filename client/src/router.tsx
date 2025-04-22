@@ -9,6 +9,8 @@ import ChannelDescription from "./components/Channel/ChannelOutlet/ChannelDescri
 import ChatsPage from "./pages/ChatsPage/ChatsPage";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import ChatPage from "./pages/ChatPage/ChatPage";
+import UsersSearchPage from "./pages/UsersSearchPage/UsersSearchPage";
+import VideosSearchPage from "./pages/VideosSearchPage/VideosSearchPage";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "video/:id",
         element: <VideoPage />,
+      },
+      {
+        path: "video/results",
+        element: <VideosSearchPage />,
       },
       {
         path: "channel/:id",
@@ -58,6 +64,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ChatPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/chats/results",
+        element: (
+          <PrivateRoute>
+            <UsersSearchPage />
           </PrivateRoute>
         ),
       },

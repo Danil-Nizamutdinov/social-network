@@ -91,12 +91,20 @@ class ChatService {
   }
 
   async deleteChat(chatId) {
+    if (!chatId) {
+      throw ApiError.BadRequest("нет id");
+    }
     const delChat = await Chat.destroy({
       where: {
         id: chatId,
       },
       include: Message,
     });
+
+    if (!delChat) {
+      throw ApiError.BadRequest("что то пошло не так, чат не удалился");
+    }
+
     return delChat;
   }
 }

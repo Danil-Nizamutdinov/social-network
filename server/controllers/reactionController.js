@@ -1,3 +1,4 @@
+const reactionService = require("../service/reactionService");
 const subscriptionsService = require("../service/subscriptionsService");
 
 class ReactionController {
@@ -37,6 +38,36 @@ class ReactionController {
         return res.json({ isSubscribe: false });
       }
       return res.json({ isSubscribe: true });
+    } catch (e) {
+      next(e);
+    }
+  }
+  async addReaction(req, res, next) {
+    try {
+      const { userId, videoId, reactionType } = req.body;
+
+      const reaction = await reactionService.addReaction(
+        userId,
+        videoId,
+        reactionType
+      );
+
+      return res.json(reaction);
+    } catch (e) {
+      next(e);
+    }
+  }
+  async getUserReaction(req, res, next) {
+    try {
+      const { userId, videoId } = req.query;
+
+      const reaction = await reactionService.findReaction(userId, videoId);
+
+      if (!reaction) {
+        return res.json({ reactionType: false });
+      }
+
+      return res.json({ reactionType: reaction.reactionType });
     } catch (e) {
       next(e);
     }

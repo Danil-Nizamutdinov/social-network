@@ -1,0 +1,31 @@
+.videos_item {
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+}
+
+.preview_box {
+  & img {
+    width: 100%;
+  }
+}
+
+.info_item {
+  margin-bottom: 10px;
+  color: #a7b4c4;
+}
+
+.title {
+  color: var(--font-color);
+}
+
+.channel_info {
+  display: flex;
+  align-items: center;
+  & img {
+    border-radius: 50%;
+    width: 35px;
+    margin-right: 10px;
+  }
+}

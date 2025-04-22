@@ -11,7 +11,7 @@ const ChatsPage: React.FC = () => {
 
   return (
     <div>
-      <Header />
+      <Header url="chats" />
       <ChatList userId={user.id} />
     </div>
   );

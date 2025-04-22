@@ -1,16 +1,22 @@
+const { Op } = require("sequelize");
 const { Video, Channel, Comment, User } = require("../models/models");
+const paginationService = require("./paginationService");
 
 class VideoService {
-  async updateLikeCounter(videoId, num, transaction) {
-    await Video.update(
-      {
-        likeCounter: Sequelize.literal(`likeCounter + ${num}`),
+  async updateLikeCounter(videoId, num) {
+    const video = await Video.findOne({
+      where: {
+        id: videoId,
       },
-      {
-        where: { id: videoId },
-        transaction,
-      }
-    );
+    });
+
+    if (!video) {
+      throw new Error("Channel not found");
+    }
+
+    video.likeCounter += num;
+    await video.save();
+    return video;
   }
   async createVideo(channelId, title, previewName, description, fileName) {
     const parsedChannelId = Number(channelId);
@@ -67,26 +73,40 @@ class VideoService {
     return { video, comments };
   }
   async getVideos(page, limit, channelId) {
-    const parsedPage = Number(page);
-    const parsedLimit = Number(limit);
+    const { parsedPage, parsedLimit, offset } =
+      paginationService.calculatePagination(page, limit);
 
-    page = parsedPage || 1;
-    limit = parsedLimit || 9;
-
-    let offset = page * limit - limit;
-
-    const count = await Video.count();
-    let totalPages = Math.ceil(count / limit);
+    let totalPages = await paginationService.calculateTotalPages(
+      Video,
+      parsedLimit
+    );
 
     if (channelId) {
       const videos = await Video.findAll({
         where: { channelId },
         include: Channel,
+        limit,
+        offset,
       });
       return { videos, page, totalPages };
     }
 
     const videos = await Video.findAll({ include: Channel, limit, offset });
+
+    return { videos, page: parsedPage, totalPages };
+  }
+  async searchVideos(title, page, limit) {
+    page = 1;
+    const totalPages = limit;
+
+    const videos = await Video.findAll({
+      where: {
+        title: {
+          [Op.iLike]: `%${title}%`,
+        },
+      },
+      include: Channel,
+    });
 
     return { videos, page, totalPages };
   }

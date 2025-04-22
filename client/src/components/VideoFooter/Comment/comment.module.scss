@@ -10,6 +10,28 @@
 .comments {
   display: none;
 }
+
 .active {
   display: block;
+}
+
+.textarea_box {
+  margin-top: 10px;
+  position: relative;
+  & img {
+    position: absolute;
+    right: 9px;
+    bottom: 9px;
+  }
+}
+
+.textarea {
+  border: 1px solid #3d4a58;
+  border-radius: 7px;
+  background: #1c232b;
+  width: 100%;
+  resize: none;
+  padding: 10px 10px;
+  padding-right: 35px;
+  font-size: 12px;
 }

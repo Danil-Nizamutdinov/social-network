@@ -7,6 +7,7 @@ import Nav from "../Nav/Nav";
 import Profile from "./Profile/Profile";
 import AddVideo from "./AddVideo/AddVideo";
 import ChangeDescription from "./ChangeDescription/ChangeDescription";
+import ChangeBackground from "./ChangeBackground/ChangeBackground";
 
 const Modals: React.FC = () => {
   const activeToggle = useAppSelector(
@@ -29,6 +30,9 @@ const Modals: React.FC = () => {
       </Modal>
       <Modal isModal={activeToggle === ActiveToggle.DESCRIPTION} isMenu={false}>
         <ChangeDescription />
+      </Modal>
+      <Modal isModal={activeToggle === ActiveToggle.BACKGROUND} isMenu={false}>
+        <ChangeBackground />
       </Modal>
     </div>
   );

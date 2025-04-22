@@ -1,0 +1,14 @@
+.header_item {
+  display: flex;
+  align-items: center;
+}
+
+.last {
+  margin-left: 15px;
+}
+
+.img_box {
+  & img {
+    border-radius: 50%;
+  }
+}

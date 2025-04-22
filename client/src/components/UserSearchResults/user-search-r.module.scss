@@ -1,0 +1,9 @@
+@use "@src/style/vars.scss" as *;
+
+.user_list {
+  margin: 20px;
+
+  @media (min-width: $desktop) {
+    margin: 0px;
+  }
+}

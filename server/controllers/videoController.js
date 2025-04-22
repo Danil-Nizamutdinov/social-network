@@ -1,6 +1,7 @@
 const videoService = require("../service/videoService");
 const fileService = require("../service/fileService");
 const ApiError = require("../exceptions/apiError");
+const { Video } = require("../models/models");
 
 class VideoController {
   async createVideo(req, res, next) {
@@ -40,6 +41,15 @@ class VideoController {
       let { page, limit, channelId } = req.query;
 
       const videos = await videoService.getVideos(page, limit, channelId);
+      return res.json(videos);
+    } catch (e) {
+      next(e);
+    }
+  }
+  async searchVideo(req, res, next) {
+    try {
+      let { title, page, limit } = req.query;
+      const videos = await videoService.searchVideos(title, page, limit);
       return res.json(videos);
     } catch (e) {
       next(e);

@@ -2,6 +2,15 @@ import React from "react";
 import Button from "@src/components/Button/Button";
 import { urlStatic } from "@src/vars";
 import { NavLink } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@src/hooks/redux";
+import {
+  useGetSubscriptionQuery,
+  useSubscribeMutation,
+  useUnsubscribeMutation,
+} from "@src/services/ReactionService";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { toggle } from "@src/store/reducers/toggleSlice";
+import { ActiveToggle } from "@src/types/main";
 import styles from "./subscribe.module.scss";
 
 interface SubscribeProps {
@@ -9,6 +18,7 @@ interface SubscribeProps {
   subscribers: number;
   name: string;
   channelId: number;
+  refetch: () => void;
 }
 
 const Subscribe: React.FC<SubscribeProps> = ({
@@ -16,7 +26,32 @@ const Subscribe: React.FC<SubscribeProps> = ({
   subscribers,
   name,
   channelId,
+  refetch,
 }) => {
+  const dispatch = useAppDispatch();
+  const userId = useAppSelector((state) => state.userReducer.user?.id);
+  const { data } = useGetSubscriptionQuery(
+    userId && channelId ? { userId, channelId } : skipToken
+  );
+  const [subscribe] = useSubscribeMutation();
+  const [unSubscribe] = useUnsubscribeMutation();
+
+  const handleSubscribe = async () => {
+    if (userId && channelId) {
+      await subscribe({ userId, channelId });
+      refetch();
+    } else {
+      dispatch(toggle(ActiveToggle.AUTH));
+    }
+  };
+
+  const handleUnSubscribe = async () => {
+    if (userId && channelId) {
+      await unSubscribe({ userId, channelId });
+      refetch();
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.channel}>
@@ -30,7 +65,19 @@ const Subscribe: React.FC<SubscribeProps> = ({
           <p className={styles.subtitle}>{subscribers} подписчиков</p>
         </div>
       </div>
-      <Button text="Подписаться" handleOnClick={() => {}} isSubmit={false} />
+      {data?.isSubscribe ? (
+        <Button
+          text="Вы подписаны"
+          handleOnClick={handleUnSubscribe}
+          isSubmit={false}
+        />
+      ) : (
+        <Button
+          text="Подписаться"
+          handleOnClick={handleSubscribe}
+          isSubmit={false}
+        />
+      )}
     </div>
   );
 };

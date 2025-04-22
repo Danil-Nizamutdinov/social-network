@@ -1,4 +1,7 @@
-import { useGetChatQuery } from "@src/services/ChatService";
+import {
+  useDeleteChatMutation,
+  useGetChatQuery,
+} from "@src/services/ChatService";
 import React from "react";
 import { urlStatic } from "@src/vars";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +18,14 @@ interface Props {
 
 const HeaderChat: React.FC<Props> = ({ userId, chatId }) => {
   const { data: chat, isLoading } = useGetChatQuery({ userId, chatId });
+  const [deleteChat] = useDeleteChatMutation();
   const navigate = useNavigate();
+
+  const handleDeleteChat = async () => {
+    await deleteChat({ chatId });
+    navigate("/chats");
+  };
+
   if (isLoading || !chat) return <Loading />;
   return (
     <div className={styles.wrapper}>
@@ -29,7 +39,11 @@ const HeaderChat: React.FC<Props> = ({ userId, chatId }) => {
           />
           <h1 className={styles.login}>{chat.users[0].login}</h1>
         </div>
-        <button className={styles.header_item} type="button">
+        <button
+          className={styles.header_item}
+          type="button"
+          onClick={handleDeleteChat}
+        >
           <img src={trash} alt="del" />
           <p className={styles.button_text}>Удалить чат</p>
         </button>

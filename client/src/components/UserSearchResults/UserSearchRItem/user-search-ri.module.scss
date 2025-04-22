@@ -1,0 +1,17 @@
+.user_item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.user_info {
+  display: flex;
+  align-items: center;
+  & p {
+    margin-left: 15px;
+  }
+  & img {
+    border-radius: 50%;
+    width: 35px;
+  }
+}

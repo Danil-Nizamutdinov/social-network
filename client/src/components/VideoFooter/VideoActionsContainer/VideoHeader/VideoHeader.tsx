@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import arrowDown from "@src/assets/expand-arrow.png";
-import ButtonImg from "@src/components/ButtonImg/ButtonImg";
+import Arrow from "@src/components/Arrow/Next";
 import convertToReadableDate from "@src/helper/readableDate";
 import styles from "./video-header.module.scss";
 
@@ -21,10 +20,9 @@ const VideoHeader: React.FC<VideoHeaderProps> = ({
     <>
       <div className={styles.video_header}>
         <h1 className={styles.title}>{title}</h1>
-        <ButtonImg
-          img={arrowDown}
-          handleOnClick={() => setIsDescription((prev) => !prev)}
-        />
+        <button onClick={() => setIsDescription((prev) => !prev)} type="button">
+          <Arrow deg={isDescription ? "-135" : "45"} />
+        </button>
       </div>
       <p className={styles.views}>{convertToReadableDate(createdAt)}</p>
       <div

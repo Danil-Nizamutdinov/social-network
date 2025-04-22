@@ -19,7 +19,7 @@ const ChannelPage: React.FC = () => {
   return (
     <ChannelContext.Provider value={data}>
       <div>
-        <Header />
+        <Header url="video" />
         <Channel />
         <div>
           <Outlet />

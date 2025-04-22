@@ -1,4 +1,3 @@
-const { Chat } = require("../models/models");
 const chatService = require("../service/chatService");
 
 class ChatController {
@@ -31,7 +30,7 @@ class ChatController {
   }
   async deleteChat(req, res, next) {
     try {
-      const { chatId } = req.query;
+      const { chatId } = req.body;
       const delChat = await chatService.deleteChat(chatId);
       return res.json(delChat);
     } catch (error) {

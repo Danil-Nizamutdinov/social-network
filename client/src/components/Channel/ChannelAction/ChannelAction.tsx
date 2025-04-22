@@ -37,7 +37,7 @@ const ChannelAction: React.FC<ChannelActionProps> = ({
         <div className={styles.actions_owner}>
           <Button
             text="Изменить фон"
-            handleOnClick={() => {}}
+            handleOnClick={() => dispatch(toggle(ActiveToggle.BACKGROUND))}
             isSubmit={false}
           />
           <Button

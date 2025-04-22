@@ -3,7 +3,6 @@ import React from "react";
 import { urlStatic } from "@src/vars";
 import convertToReadableDate from "@src/helper/readableDate";
 import styles from "./comment-item.module.scss";
-import CommentAction from "./CommentAction/CommentAction";
 
 const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
   return (
@@ -17,7 +16,6 @@ const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
           {convertToReadableDate(comment.createdAt)}
         </p>
         <p>{comment.content}</p>
-        <CommentAction like={comment.like} dislike={comment.dislike} />
       </div>
     </div>
   );

@@ -19,57 +19,67 @@ class ReactionService {
   }
 
   async addReaction(userId, videoId, reactionType) {
-    const transaction = await Sequelize.transaction();
-
     await this.validateUserAndVideo(userId, videoId);
 
-    const userReaction = await this.findReaction(userId, channelId);
+    const existingReaction = await this.findReaction(userId, videoId);
 
-    if (!userReaction) {
-      const videoReaction = await VideoReaction.create(
-        {
-          userId,
-          videoId,
-          reactionType,
-        },
-        { transaction }
-      );
-
-      await transaction.commit();
-      return { reactionType: videoReaction.reactionType };
+    if (!existingReaction) {
+      return await this.handleNewReaction(userId, videoId, reactionType);
     }
 
-    const previousReactionType = userReaction.reactionType;
+    return await this.handleExistingReaction(
+      existingReaction,
+      reactionType,
+      videoId
+    );
+  }
 
-    if (previousReactionType === reactionType) {
-      userReaction.destroy({ transaction });
-      await transaction.commit();
-      return { reactionType: userReaction.reactionType };
+  async handleNewReaction(userId, videoId, reactionType) {
+    const newReaction = await VideoReaction.create({
+      userId,
+      videoId,
+      reactionType,
+    });
+
+    const likeIncrement = reactionType === "like" ? 1 : -1;
+    await updateLikeCounter(videoId, likeIncrement);
+
+    return { reactionType: newReaction.reactionType };
+  }
+
+  async handleExistingReaction(existingReaction, newReactionType, videoId) {
+    const previousReactionType = existingReaction.reactionType;
+
+    if (previousReactionType === newReactionType) {
+      await existingReaction.destroy();
+
+      const likeIncrement = newReactionType === "like" ? -1 : 1;
+      await updateLikeCounter(videoId, likeIncrement);
+
+      return { reactionType: null };
+    }
+    return await this.changeReactionType(
+      existingReaction,
+      previousReactionType,
+      newReactionType,
+      videoId
+    );
+  }
+
+  async changeReactionType(reaction, previousType, newType, videoId) {
+    reaction.reactionType = newType;
+    await reaction.save();
+
+    let likeIncrement = 0;
+    if (previousType === "like" && newType === "dislike") {
+      likeIncrement = -2;
+    } else if (previousType === "dislike" && newType === "like") {
+      likeIncrement = 2;
     }
 
-    userReaction.reactionType = reactionType;
-    await userReaction.save({ transaction });
+    await updateLikeCounter(videoId, likeIncrement);
 
-    let num = 0;
-    if (previousReactionType === "like" && reactionType === "dislike") {
-      num = -2;
-    } else if (previousReactionType === "dislike" && reactionType === "like") {
-      num = 2;
-    } else if (previousReactionType === "like" && reactionType === "like") {
-      num = -1;
-    } else if (
-      previousReactionType === "dislike" &&
-      reactionType === "dislike"
-    ) {
-      num = 1;
-    }
-
-    if (num !== 0) {
-      await updateLikeCounter(videoId, num, transaction);
-    }
-
-    await transaction.commit();
-    return { reactionType: userReaction.reactionType };
+    return { reactionType: reaction.reactionType };
   }
 }
 

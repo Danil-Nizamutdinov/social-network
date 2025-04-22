@@ -4,7 +4,15 @@ import VideoHeader from "./VideoHeader/VideoHeader";
 import VideoActions from "./VideoActions/VideoActions";
 import styles from "./video-actions-c.module.scss";
 
-const VideoActionsContainer: React.FC<{ video: IVideo }> = ({ video }) => {
+interface VideoActionsCProps {
+  video: IVideo;
+  refetch: () => void;
+}
+
+const VideoActionsContainer: React.FC<VideoActionsCProps> = ({
+  video,
+  refetch,
+}) => {
   return (
     <div className={styles.wrapper}>
       <VideoHeader
@@ -12,7 +20,11 @@ const VideoActionsContainer: React.FC<{ video: IVideo }> = ({ video }) => {
         description={video.description}
         createdAt={video.createdAt}
       />
-      <VideoActions likeCounter={video.likeCounter} />
+      <VideoActions
+        likeCounter={video.likeCounter}
+        videoId={video.id}
+        refetch={refetch}
+      />
     </div>
   );
 };

@@ -11,7 +11,10 @@ class MessageService {
     return message;
   }
   async getMessages(chatId) {
-    const messages = await Message.findAll({ where: { chatId } });
+    const messages = await Message.findAll({
+      where: { chatId },
+      order: [["createdAt", "ASC"]],
+    });
     return messages;
   }
 }

@@ -1,28 +1,27 @@
-import ButtonBlue from "@src/components/ButtonBlue/ButtonBlue";
 import { urlStatic } from "@src/vars";
 import React from "react";
 import { useParams } from "react-router-dom";
-import Button from "@src/components/Button/Button";
-import { useAppDispatch, useAppSelector } from "@src/hooks/redux";
-import { toggle } from "@src/store/reducers/toggleSlice";
-import { ActiveToggle } from "@src/types/main";
+import { useAppSelector } from "@src/hooks/redux";
 import styles from "./channel-action.module.scss";
+import ChannelActionOwner from "./ChannelActionOwner/ChannelActionOwner";
+import ChannelActionUser from "./ChannelActionUser/ChannelActionUser";
 
 interface ChannelActionProps {
   avatar: string;
   name: string;
   subscribers: number;
+  refetch: () => void;
 }
 
 const ChannelAction: React.FC<ChannelActionProps> = ({
   avatar,
   name,
   subscribers,
+  refetch,
 }) => {
   const { id } = useParams();
-  const user = useAppSelector((state) => state.userReducer.user);
-  const dispatch = useAppDispatch();
-  const isOwner = user?.id === Number(id);
+  const userId = useAppSelector((state) => state.userReducer.user?.id);
+  const isOwner = userId === Number(id);
 
   return (
     <div className={styles.action}>
@@ -35,23 +34,13 @@ const ChannelAction: React.FC<ChannelActionProps> = ({
       </div>
       {isOwner ? (
         <div className={styles.actions_owner}>
-          <Button
-            text="Изменить фон"
-            handleOnClick={() => dispatch(toggle(ActiveToggle.BACKGROUND))}
-            isSubmit={false}
-          />
-          <Button
-            text="Добавить видео"
-            handleOnClick={() => dispatch(toggle(ActiveToggle.ADD_VIDEO))}
-            isSubmit={false}
-          />
+          <ChannelActionOwner />
         </div>
       ) : (
-        <ButtonBlue
-          text="Подписаться"
-          isDisabled={false}
-          handleOnClick={() => {}}
-          isSubmit={false}
+        <ChannelActionUser
+          userId={userId}
+          channelId={Number(id)}
+          refetch={refetch}
         />
       )}
     </div>

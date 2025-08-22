@@ -3,12 +3,35 @@ import { urlStatic } from "@src/vars";
 import { NavLink } from "react-router-dom";
 import convertToReadableDate from "@src/helper/readableDate";
 import { IVideo } from "@src/types/main";
+import trash from "@src/assets/trash.png";
+import ButtonImg from "@src/components/ButtonImg/ButtonImg";
+import { useDeleteVideoMutation } from "@src/services/VideoService";
 import styles from "./video-list-item.module.scss";
 
-const VideoListItem: React.FC<{ video: IVideo }> = ({ video }) => {
+interface IVideoListItemProps {
+  video: IVideo;
+  // eslint-disable-next-line react/require-default-props
+  isOwner?: boolean;
+}
+
+const VideoListItem: React.FC<IVideoListItemProps> = ({
+  video,
+  isOwner = false,
+}) => {
+  const [deleteVideo] = useDeleteVideoMutation();
+
+  const handleDeleteVideo = async () => {
+    await deleteVideo({ videoId: video.id, channelId: video.channel.id });
+  };
+
   return (
-    <div>
-      <NavLink to={`/video/${video.id}`}>
+    <div className={styles.video_list_item}>
+      {isOwner && (
+        <div className={styles.del}>
+          <ButtonImg img={trash} handleOnClick={handleDeleteVideo} />
+        </div>
+      )}
+      <NavLink to={`/video/${video.id}`} onClick={() => window.scrollTo(0, 0)}>
         <img
           src={urlStatic + video.preview}
           alt="preview"

@@ -20,6 +20,7 @@ const ButtonBlue: React.FC<ButtonBlueProps> = ({
       className={styles.button}
       disabled={isDisabled}
       onClick={handleOnClick}
+      data-testid="btn"
     >
       {text}
     </button>

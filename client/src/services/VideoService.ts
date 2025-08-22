@@ -66,6 +66,14 @@ const videoApi = createApi({
         data,
       }),
     }),
+    deleteVideo: build.mutation<any, { videoId: number; channelId: number }>({
+      query: (data) => ({
+        url: "video/video",
+        method: "DELETE",
+        data,
+      }),
+      invalidatesTags: ["Post"],
+    }),
   }),
 });
 
@@ -75,6 +83,7 @@ export const {
   useAddVideoMutation,
   useAddCommentMutation,
   useSearchVideosQuery,
+  useDeleteVideoMutation,
 } = videoApi;
 
 export default videoApi;

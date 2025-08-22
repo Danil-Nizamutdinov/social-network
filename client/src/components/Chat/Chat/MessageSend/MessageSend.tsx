@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
-import ButtonImg from "@src/components/ButtonImg/ButtonImg";
 import smile from "@src/assets/smile.png";
 import send from "@src/assets/send.png";
 import styles from "./message-send.module.scss";
@@ -21,6 +20,12 @@ const MessageSend: React.FC<Props> = ({ socket, userId }) => {
     setMessage("");
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  };
+
   return (
     <div className={styles.message_send}>
       <input
@@ -29,12 +34,15 @@ const MessageSend: React.FC<Props> = ({ socket, userId }) => {
         placeholder="Написать сообщение..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
       />
 
       <div className={styles.actons}>
         <img src={smile} alt="smile" />
         <span className={styles.send_img}>
-          <ButtonImg img={send} handleOnClick={sendMessage} />
+          <button onClick={sendMessage} type="button" data-testid="btn">
+            <img src={send} alt="img" data-testid="img" />
+          </button>
         </span>
       </div>
     </div>

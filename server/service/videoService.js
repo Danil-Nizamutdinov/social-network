@@ -82,6 +82,11 @@ class VideoService {
     );
 
     if (channelId) {
+      let totalPages = await paginationService.calculateTotalPages(
+        Video,
+        parsedLimit,
+        { channelId }
+      );
       const videos = await Video.findAll({
         where: { channelId },
         include: Channel,
@@ -109,6 +114,24 @@ class VideoService {
     });
 
     return { videos, page, totalPages };
+  }
+  async deleteVideo(videoId) {
+    if (!videoId) {
+      throw ApiError.BadRequest("нет id");
+    }
+
+    const delVideo = await Video.destroy({
+      where: {
+        id: videoId,
+      },
+      include: Comment,
+    });
+
+    if (!delVideo) {
+      throw ApiError.BadRequest("что то пошло не так, video не удалилось");
+    }
+
+    return delVideo;
   }
 }
 

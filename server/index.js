@@ -14,6 +14,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const path = require("path");
 const messageService = require("./service/messageService");
+const socketAuthMiddleware = require("./middlewares/socketMiddleware/socketAuthMiddleware");
+const socketChatAccessMiddleware = require("./middlewares/socketMiddleware/socketChatAccessMiddleware");
 
 const io = new Server(server, {
   cors: {
@@ -36,10 +38,13 @@ app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 5000;
 
+io.use(socketAuthMiddleware);
+io.use(socketChatAccessMiddleware);
+
 io.on("connection", (socket) => {
-  socket.on("join", async ({ name, room }) => {
-    socket.join(room);
-    const messages = await messageService.getMessages(room);
+  socket.on("join", async ({ login, chatId }) => {
+    socket.join(chatId);
+    const messages = await messageService.getMessages(chatId);
     socket.emit("getMessages", messages);
   });
 

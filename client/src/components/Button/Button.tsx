@@ -13,6 +13,7 @@ const Button: React.FC<ButtonProps> = ({ text, handleOnClick, isSubmit }) => {
       type={isSubmit ? "submit" : "button"}
       className={styles.button}
       onClick={handleOnClick}
+      data-testid="btn"
     >
       {text}
     </button>

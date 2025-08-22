@@ -11,17 +11,18 @@ const VideosPage: React.FC = () => {
     page,
   });
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <Loading data-testid="loading" />;
 
   return (
     <div>
       <Header url="video" />
-      {data && <VideoList videos={data.videos} />}
+      {data && <VideoList videos={data.videos} data-testid="video-list" />}
       {data && (
         <PaginationBar
           totalPages={data.totalPages}
           page={page}
           setPage={setPage}
+          data-testid="pagination-bar"
         />
       )}
     </div>

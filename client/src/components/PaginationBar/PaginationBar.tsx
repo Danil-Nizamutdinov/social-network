@@ -13,6 +13,7 @@ const PaginationBar: React.FC<PaginationBarProps> = ({
   page,
   setPage,
 }) => {
+  if (!totalPages) return <span />;
   return (
     <div className={styles.pagination}>
       <Pagination totalPages={totalPages} page={page} setPage={setPage} />

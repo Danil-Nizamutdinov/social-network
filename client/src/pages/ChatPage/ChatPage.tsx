@@ -18,7 +18,7 @@ const ChatPage: React.FC = () => {
     <div>
       {isDesktop && <Header url="chats" />}
       <HeaderChat userId={user.id} chatId={Number(id)} />
-      <ChatContainer name={user.login} room={id} />
+      <ChatContainer login={user.login} chatId={id} />
     </div>
   );
 };

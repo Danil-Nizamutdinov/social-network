@@ -7,6 +7,7 @@ import Loading from "../Loading/Loading";
 import VideosSearchRItem from "./VideosSearchRItem/VideosSearchRItem";
 import styles from "./videos-search-r.module.scss";
 import VideoList from "../VideoList/VideoList";
+import Absence from "../Absence/Absence";
 
 const VideosSearchResults: React.FC<{ searchQuery: string }> = ({
   searchQuery,
@@ -17,7 +18,7 @@ const VideosSearchResults: React.FC<{ searchQuery: string }> = ({
   const isDesktop = width >= desktopWidth;
 
   if (isLoading) return <Loading />;
-
+  if (data?.videos.length === 0) return <Absence />;
   return (
     <div>
       {isDesktop ? (

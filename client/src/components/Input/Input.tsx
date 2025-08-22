@@ -6,6 +6,8 @@ interface InputProps {
   setValue: (value: string) => void;
   placeholder: string;
   type: string;
+  // eslint-disable-next-line react/require-default-props
+  onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -13,6 +15,7 @@ const Input: React.FC<InputProps> = ({
   setValue,
   placeholder,
   type,
+  onKeyDown,
 }) => {
   return (
     <input
@@ -21,6 +24,8 @@ const Input: React.FC<InputProps> = ({
       onChange={(e) => setValue(e.target.value)}
       placeholder={placeholder}
       className={styles.input}
+      onKeyDown={onKeyDown}
+      data-testid="input"
     />
   );
 };

@@ -18,14 +18,17 @@ const Pagination: React.FC<PaginationBarProps2> = ({
 
   const changePage = (currentPage: number) => {
     setPage(currentPage);
+    window.scrollTo(0, 0);
   };
 
   const changePagePrevious = () => {
     setPage(page - 1);
+    window.scrollTo(0, 0);
   };
 
   const changePageNext = () => {
     setPage(page + 1);
+    window.scrollTo(0, 0);
   };
 
   return (

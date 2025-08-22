@@ -14,13 +14,15 @@ export const useChannelContext = () => {
 
 const ChannelPage: React.FC = () => {
   const { id } = useParams();
-  const { data, isLoading } = useGetChannelQuery({ channelId: Number(id) });
+  const { data, isLoading, refetch } = useGetChannelQuery({
+    channelId: Number(id),
+  });
   if (isLoading || !data) return <Loading />;
   return (
     <ChannelContext.Provider value={data}>
       <div>
         <Header url="video" />
-        <Channel />
+        <Channel refetch={refetch} />
         <div>
           <Outlet />
         </div>

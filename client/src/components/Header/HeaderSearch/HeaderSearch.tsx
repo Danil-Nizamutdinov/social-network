@@ -19,6 +19,12 @@ const HeaderSearch: React.FC<HeaderSearchProps> = ({ setIsSearch, url }) => {
     navigate(`/${url}/results?search_query=${encodeURIComponent(text)}`);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleNavigate();
+    }
+  };
+
   return (
     <>
       <ButtonImg img={arrow} handleOnClick={() => setIsSearch(false)} />
@@ -29,6 +35,7 @@ const HeaderSearch: React.FC<HeaderSearchProps> = ({ setIsSearch, url }) => {
           setValue={setText}
           placeholder="Поиск"
           type="text"
+          onKeyDown={handleKeyDown}
         />
         <ButtonImg img={searchImg} handleOnClick={handleNavigate} />
       </div>

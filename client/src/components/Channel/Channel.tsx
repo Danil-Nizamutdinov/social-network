@@ -6,7 +6,11 @@ import ChannelAction from "./ChannelAction/ChannelAction";
 import ChannelNav from "./ChannelNav/ChannelNav";
 import Loading from "../Loading/Loading";
 
-const Channel: React.FC = () => {
+interface ChannelProps {
+  refetch: () => void;
+}
+
+const Channel: React.FC<ChannelProps> = ({ refetch }) => {
   const data = useChannelContext();
   if (!data) return <Loading />;
   return (
@@ -23,6 +27,7 @@ const Channel: React.FC = () => {
           avatar={data.avatar}
           name={data.name}
           subscribers={data.subscribers}
+          refetch={refetch}
         />
         <ChannelNav />
       </div>

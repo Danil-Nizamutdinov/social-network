@@ -17,5 +17,11 @@
       "@src/*": ["src/*"]
     }
   },
-  "include": ["src", ".eslintrc.cjs", "webpack.config.js"]
+  "include": [
+    "src",
+    ".eslintrc.cjs",
+    "webpack.config.js",
+    "jest.config.ts",
+    "./test/fileMock.js"
+  ]
 }

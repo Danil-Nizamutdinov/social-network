@@ -13,7 +13,7 @@ const ProfileHeader: React.FC<{ user: IUser }> = ({ user }) => {
         </div>
         <div>
           <h1 className={styles.login}>{user.login}</h1>
-          <p className={styles.email}>da****@mail.ru</p>
+          <p className={styles.email}>{user.email}</p>
         </div>
       </div>
       <div>

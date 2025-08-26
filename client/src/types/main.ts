@@ -38,6 +38,7 @@ export interface IUser {
   id: number;
   avatar: string;
   login: string;
+  email: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -46,6 +47,12 @@ export interface AuthResponse {
   user: IUser;
   accessToken: string;
   refreshToken: string;
+}
+
+export interface AuthResponseRegStart {
+  tempUserId: number;
+  resendCooldown: string;
+  message: string;
 }
 
 export interface IComment {

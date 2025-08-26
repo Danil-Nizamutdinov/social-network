@@ -1,11 +1,10 @@
 require("dotenv").config();
-
+const initializeSocket = require("./socket/socket");
 const express = require("express");
 const sequelize = require("./db");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index");
-const models = require("./models/models");
 const fileUpload = require("express-fileupload");
 const errorMiddleware = require("./middlewares/errorMiddleware");
 const app = express();
@@ -13,9 +12,7 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const path = require("path");
-const messageService = require("./service/messageService");
-const socketAuthMiddleware = require("./middlewares/socketMiddleware/socketAuthMiddleware");
-const socketChatAccessMiddleware = require("./middlewares/socketMiddleware/socketChatAccessMiddleware");
+const cronService = require("./service/cronService");
 
 const io = new Server(server, {
   cors: {
@@ -38,26 +35,7 @@ app.use(errorMiddleware);
 
 const PORT = process.env.PORT || 5000;
 
-io.use(socketAuthMiddleware);
-io.use(socketChatAccessMiddleware);
-
-io.on("connection", (socket) => {
-  socket.on("join", async ({ login, chatId }) => {
-    socket.join(chatId);
-    const messages = await messageService.getMessages(chatId);
-    socket.emit("getMessages", messages);
-  });
-
-  socket.on("sendMessage", async ({ userId, chatId, content }) => {
-    const message = await messageService.addMessage(userId, chatId, content);
-    const messages = await messageService.getMessages(chatId);
-    io.to(chatId).emit("message", messages);
-  });
-
-  io.on("disconnect", () => {
-    console.log("Disconnect");
-  });
-});
+initializeSocket(io);
 
 server.listen(3000, () => {
   console.log("listening on *:3000");
@@ -72,4 +50,6 @@ const start = async () => {
     console.log(e);
   }
 };
+
 start();
+cronService.init();

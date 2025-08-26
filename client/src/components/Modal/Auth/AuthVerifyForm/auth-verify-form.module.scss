@@ -1,0 +1,26 @@
+.button_box {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.form {
+  & button {
+    width: 100%;
+  }
+}
+.button {
+  width: 100%;
+  text-align: center;
+  color: var(--primary-light-blue);
+  margin-top: 20px;
+}
+
+.arrow {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  transform: rotate(90deg);
+  & img {
+    width: 20px;
+  }
+}

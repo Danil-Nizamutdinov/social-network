@@ -1,18 +1,29 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AuthResponse } from "@src/types/main";
+import { AuthResponse, AuthResponseRegStart } from "@src/types/main";
 import { UserState } from "@src/types/storeTypes";
 import {
   login,
   checkAuth,
   logout,
-  registration,
+  registrationStart,
+  registrationVerify,
+  resendVerificationCode,
 } from "./ActionCreators/UserAC";
 
 const setUserData = (state: UserState, action: PayloadAction<AuthResponse>) => {
   state.user = action.payload.user;
   localStorage.setItem("token", action.payload.accessToken);
   state.isAuth = true;
+  state.isLoading = false;
+};
+
+const setTempUserData = (
+  state: UserState,
+  action: PayloadAction<AuthResponseRegStart>
+) => {
+  state.tempUserId = action.payload.tempUserId;
+  state.resendCooldownCode = action.payload.resendCooldown;
   state.isLoading = false;
 };
 
@@ -31,25 +42,49 @@ const handlePending = (state: UserState) => {
 const initialState: UserState = {
   isAuth: !!localStorage.getItem("token"),
   user: null,
+  tempUserId: Number(localStorage.getItem("tempUserId") ?? null),
   error: "",
+  resendCooldownCode: "",
   isLoading: false,
 };
 
 const userSlice = createSlice({
   name: "toggle",
   initialState,
-  reducers: {},
+  reducers: {
+    removeTempUserId(state) {
+      state.tempUserId = null;
+      state.resendCooldownCode = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, handlePending)
       .addCase(login.fulfilled, (state, action) => setUserData(state, action))
       .addCase(login.rejected, (state, action) => setError(state, action))
 
-      .addCase(registration.pending, handlePending)
-      .addCase(registration.fulfilled, (state, action) =>
-        setUserData(state, action)
+      .addCase(registrationStart.pending, handlePending)
+      .addCase(registrationStart.fulfilled, (state, action) => {
+        setTempUserData(state, action);
+      })
+      .addCase(registrationStart.rejected, (state, action) =>
+        setError(state, action)
       )
-      .addCase(registration.rejected, (state, action) =>
+
+      .addCase(resendVerificationCode.pending, handlePending)
+      .addCase(resendVerificationCode.fulfilled, (state, action) => {
+        setTempUserData(state, action);
+      })
+      .addCase(
+        resendVerificationCode.rejected,
+        (state, action) => setError(state, action) // ??
+      )
+
+      .addCase(registrationVerify.pending, handlePending)
+      .addCase(registrationVerify.fulfilled, (state, action) => {
+        setUserData(state, action);
+      })
+      .addCase(registrationVerify.rejected, (state, action) =>
         setError(state, action)
       )
 
@@ -68,5 +103,7 @@ const userSlice = createSlice({
       );
   },
 });
+
+export const { removeTempUserId } = userSlice.actions;
 
 export default userSlice.reducer;

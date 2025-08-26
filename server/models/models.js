@@ -5,7 +5,18 @@ const User = sequelize.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   avatar: { type: DataTypes.STRING },
   login: { type: DataTypes.STRING, unique: true },
+  email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING },
+});
+
+const TempUser = sequelize.define("TempUser", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  login: { type: DataTypes.STRING, allowNull: false, unique: true },
+  password: { type: DataTypes.STRING, allowNull: false },
+  email: { type: DataTypes.STRING, allowNull: false },
+  verificationCode: { type: DataTypes.STRING, allowNull: false },
+  codeExpires: { type: DataTypes.DATE, allowNull: false },
+  resendCooldown: { type: DataTypes.DATE, allowNull: false },
 });
 
 const Token = sequelize.define("token", {
@@ -110,4 +121,5 @@ module.exports = {
   VideoReaction,
   CommentReaction,
   UserSubscriptions,
+  TempUser,
 };

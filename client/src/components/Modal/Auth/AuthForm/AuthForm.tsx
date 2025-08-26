@@ -2,7 +2,10 @@ import ButtonBlue from "@src/components/ButtonBlue/ButtonBlue";
 import Input from "@src/components/Input/Input";
 import React, { useState } from "react";
 import { useAppDispatch } from "@src/hooks/redux";
-import { login, registration } from "@src/store/reducers/ActionCreators/UserAC";
+import {
+  login,
+  registrationStart,
+} from "@src/store/reducers/ActionCreators/UserAC";
 import styles from "./auth-form.module.scss";
 
 interface AuthFormProps {
@@ -10,6 +13,7 @@ interface AuthFormProps {
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ isRegForm }) => {
+  const [email, setEmail] = useState<string>("");
   const [loginText, setLoginText] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [password2, setPassword2] = useState<string>("");
@@ -21,7 +25,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isRegForm }) => {
   const auth = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isRegForm) {
-      dispatch(registration({ loginText, password }));
+      dispatch(registrationStart({ email, loginText, password }));
     } else {
       dispatch(login({ loginText, password }));
     }
@@ -29,6 +33,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ isRegForm }) => {
 
   return (
     <form className={styles.form} onSubmit={auth}>
+      {isRegForm && (
+        <Input
+          value={email}
+          setValue={setEmail}
+          placeholder="email"
+          type="email"
+        />
+      )}
       <Input
         value={loginText}
         setValue={setLoginText}

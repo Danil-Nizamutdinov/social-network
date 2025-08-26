@@ -1,13 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import authApi from "@src/api/AuthApi";
 import { AppDispatch } from "@src/store/store";
-import { AuthResponse } from "@src/types/main";
+import { AuthResponse, AuthResponseRegStart } from "@src/types/main";
 import { isAxiosError } from "axios";
 import { toggleFalse } from "../toggleSlice";
 
 interface ArgLogin {
   loginText: string;
   password: string;
+}
+
+interface ArgReg {
+  email: string;
+  loginText: string;
+  password: string;
+}
+
+interface ArgRegVerify {
+  tempUserId: number;
+  code: string;
 }
 
 export const login = createAsyncThunk<
@@ -35,15 +46,54 @@ export const login = createAsyncThunk<
   }
 );
 
-export const registration = createAsyncThunk<
+export const registrationStart = createAsyncThunk<
+  AuthResponseRegStart,
+  ArgReg,
+  { rejectValue: string }
+>(
+  "user/registrationStart",
+  async ({ email, loginText, password }, { rejectWithValue }) => {
+    try {
+      const res = await authApi.registrationStart(email, loginText, password);
+      return res.data;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data.message || "Произошла ошибка"
+        );
+      }
+      return rejectWithValue("Неизвестная ошибка");
+    }
+  }
+);
+
+export const resendVerificationCode = createAsyncThunk<
+  AuthResponseRegStart,
+  number,
+  { rejectValue: string }
+>("user/resendVerificationCode", async (tempUserId, { rejectWithValue }) => {
+  try {
+    const res = await authApi.resendVerificationCode(tempUserId);
+    return res.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data.message || "Произошла ошибка"
+      );
+    }
+    return rejectWithValue("Неизвестная ошибка");
+  }
+});
+
+export const registrationVerify = createAsyncThunk<
   AuthResponse,
-  ArgLogin,
+  ArgRegVerify,
   { rejectValue: string; dispatch: AppDispatch }
 >(
   "user/registration",
-  async ({ loginText, password }, { rejectWithValue, dispatch }) => {
+  async ({ tempUserId, code }, { rejectWithValue, dispatch }) => {
     try {
-      const res = await authApi.registration(loginText, password);
+      const res = await authApi.registrationVerify(tempUserId, code);
       dispatch(toggleFalse());
       return res.data;
     } catch (error) {

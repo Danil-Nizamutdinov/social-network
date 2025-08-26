@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { AuthResponse } from "@src/types/main";
+import { AuthResponse, AuthResponseRegStart } from "@src/types/main";
 import { api } from "./index";
 
 const authApi = {
@@ -10,11 +10,34 @@ const authApi = {
     return api.post<AuthResponse>("user/login", { login, password });
   },
 
-  async registration(
+  async registrationStart(
+    email: string,
     login: string,
     password: string
+  ): Promise<AxiosResponse<AuthResponseRegStart>> {
+    return api.post<AuthResponseRegStart>("user/registration/start", {
+      login,
+      password,
+      email,
+    });
+  },
+
+  async resendVerificationCode(
+    tempUserId: number
+  ): Promise<AxiosResponse<AuthResponseRegStart>> {
+    return api.post<AuthResponseRegStart>("user/registration/resend_code", {
+      tempUserId,
+    });
+  },
+
+  async registrationVerify(
+    tempUserId: number,
+    code: string
   ): Promise<AxiosResponse<AuthResponse>> {
-    return api.post<AuthResponse>("user/registration", { login, password });
+    return api.post<AuthResponse>("user/registration/verify", {
+      tempUserId,
+      code,
+    });
   },
 
   async logout(): Promise<void> {

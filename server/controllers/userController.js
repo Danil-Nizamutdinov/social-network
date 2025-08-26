@@ -4,15 +4,36 @@ const userService = require("../service/userService");
 const channelService = require("../service/channelService");
 
 class UserController {
-  async registration(req, res, next) {
+  async startRegistration(req, res, next) {
     try {
-      const { login, password } = req.body;
-      const userData = await userService.registration(login, password);
-      await channelService.createChannel(userData.user.id, login);
+      const { login, password, email } = req.body;
+      const result = await userService.registration(login, password, email);
+      return res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+  async resendVerificationCode(req, res, next) {
+    try {
+      const { tempUserId } = req.body;
+      const result = await userService.resendVerificationCode(tempUserId);
+      return res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+  async verifyRegistration(req, res, next) {
+    try {
+      const { tempUserId, code } = req.body;
+      const userData = await userService.verifyRegistration(tempUserId, code);
+
+      await channelService.createChannel(userData.user.id, userData.user.login);
+
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
+
       return res.json(userData);
     } catch (e) {
       next(e);

@@ -1,9 +1,14 @@
-const { User, TempUser } = require("../models/models");
+const { User, TempUser, LoginAttempt } = require("../models/models");
 const bcrypt = require("bcrypt");
 const ApiError = require("../exceptions/apiError");
 const tokenService = require("./tokenService");
 const validator = require("validator");
 const mailService = require("./mailService");
+
+const CODE_EXPIRES_MINUTES = 15;
+const RESEND_COOLDOWN_MINUTES = 3;
+const BLOCK_DURATION_MINUTES = 30;
+const MAX_ATTEMPTS = 5;
 
 const validateLoginPassword = (text) => {
   if (text.length < 4 || text.length > 14) {
@@ -19,70 +24,50 @@ function validateEmail(email) {
 
 class UserService {
   async registration(login, password, email) {
-    if (!validateLoginPassword(login)) {
-      throw ApiError.BadRequest("Некорректный логин");
-    }
-    if (!validateLoginPassword(password)) {
-      throw ApiError.BadRequest("Некорректный пароль");
-    }
-    if (!validateEmail(email)) {
-      throw ApiError.BadRequest("Некорректный email");
-    }
+    this.validateRegistrationData(login, password, email);
 
-    const candidate = await User.findOne({ where: { login } });
-    if (candidate) {
-      throw ApiError.BadRequest(
-        `Пользователь с логином ${login} уже существует`
-      );
-    }
+    const existingUser = await this.checkExistingUser(login, email);
 
-    const emailCandidate = await User.findOne({ where: { email } });
-    if (emailCandidate) {
-      throw ApiError.BadRequest(`Пользователь с email ${email} уже существует`);
+    if (existingUser) {
+      throw ApiError.BadRequest("Пользователь с такими данными уже существует");
     }
 
     const candidateTempUser = await TempUser.findOne({ where: { email } });
 
     if (candidateTempUser) {
-      return {
-        tempUserId: candidateTempUser.id,
-        resendCooldown: candidateTempUser.resendCooldown,
-        message: "Код подтверждения отправлен на email",
-      };
+      return this.prepareTempUserResponse(candidateTempUser);
     }
 
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-    const codeExpires = new Date(Date.now() + 15 * 60 * 1000);
-    const resendCooldown = new Date(Date.now() + 3 * 60 * 1000);
+    const tempUser = await this.createTempUser(login, password, email);
 
-    const tempUser = await TempUser.create({
-      login,
-      password: await bcrypt.hash(password, 4),
-      email,
-      verificationCode,
-      codeExpires,
-      resendCooldown,
-    });
+    await mailService.sendVerificationCode(email, tempUser.verificationCode);
 
-    await mailService.sendVerificationCode(email, verificationCode);
-
-    return {
-      tempUserId: tempUser.id,
-      resendCooldown: tempUser.resendCooldown,
-      message: "Код подтверждения отправлен на email",
-    };
+    return this.prepareTempUserResponse(tempUser);
   }
 
   async verifyRegistration(tempUserId, code) {
     const tempUser = await TempUser.findByPk(tempUserId);
 
     if (!tempUser) {
-      throw ApiError.BadRequest("Неверный код подтверждения");
+      throw ApiError.BadRequest("ошибка tempUser");
     }
 
+    const loginAttempt = await this.checkAndUpdateLoginAttempt(tempUser.email);
+
+    const now = new Date();
+
     if (tempUser.verificationCode !== code) {
+      loginAttempt.attemptCount += 1;
+      loginAttempt.lastAttempt = now;
+
+      if (loginAttempt.attemptCount >= MAX_ATTEMPTS) {
+        loginAttempt.blockedUntil = new Date(
+          Date.now() + BLOCK_DURATION_MINUTES * 60 * 1000
+        );
+      }
+
+      await loginAttempt.save();
+
       throw ApiError.BadRequest("Неверный код подтверждения");
     }
 
@@ -95,7 +80,6 @@ class UserService {
       login: tempUser.login,
       password: tempUser.password,
       email: tempUser.email,
-      // isVerified: true,
     });
 
     await TempUser.destroy({ where: { id: tempUserId } });
@@ -122,11 +106,14 @@ class UserService {
     const tempUser = await TempUser.findByPk(tempUserId);
 
     if (!tempUser) {
-      throw ApiError.BadRequest("Неверный код подтверждения");
+      throw ApiError.BadRequest("Ошибка tempUser");
     }
 
-    const currentCooldown = new Date(tempUser.resendCooldown);
+    await this.checkAndUpdateLoginAttempt(tempUser.email);
+
     const now = new Date();
+
+    const currentCooldown = new Date(tempUser.resendCooldown);
 
     const isCooldownDateValid = !isNaN(currentCooldown.getTime());
     const isCooldownActive = now < currentCooldown;
@@ -138,13 +125,97 @@ class UserService {
     const verificationCode = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
-    const resendCooldown = new Date(Date.now() + 3 * 60 * 1000);
+    const resendCooldown = new Date(
+      Date.now() + RESEND_COOLDOWN_MINUTES * 60 * 1000
+    );
 
     tempUser.resendCooldown = resendCooldown;
+    tempUser.codeExpires = new Date(
+      Date.now() + CODE_EXPIRES_MINUTES * 60 * 1000
+    );
+    tempUser.verificationCode = verificationCode;
+
     await tempUser.save();
 
     await mailService.sendVerificationCode(tempUser.email, verificationCode);
 
+    return {
+      tempUserId: tempUser.id,
+      resendCooldown: tempUser.resendCooldown,
+      message: "Код подтверждения отправлен на email",
+    };
+  }
+
+  async checkAndUpdateLoginAttempt(email) {
+    const now = new Date();
+    const [loginAttempt] = await LoginAttempt.findOrCreate({
+      where: { email },
+      defaults: {
+        attemptCount: 0,
+        lastAttempt: now,
+        blockedUntil: null,
+      },
+    });
+
+    if (loginAttempt.blockedUntil && now > loginAttempt.blockedUntil) {
+      loginAttempt.attemptCount = 0;
+      loginAttempt.blockedUntil = null;
+      await loginAttempt.save();
+    }
+
+    if (loginAttempt.blockedUntil && now <= loginAttempt.blockedUntil) {
+      const minutesLeft = Math.ceil((loginAttempt.blockedUntil - now) / 60000);
+      throw ApiError.BadRequest(
+        `Аккаунт заблокирован. Попробуйте через ${minutesLeft} минут`
+      );
+    }
+
+    return loginAttempt;
+  }
+
+  validateRegistrationData(login, password, email) {
+    if (!validateLoginPassword(login)) {
+      throw ApiError.BadRequest("Некорректный логин");
+    }
+    if (!validateLoginPassword(password)) {
+      throw ApiError.BadRequest("Некорректный пароль");
+    }
+    if (!validateEmail(email)) {
+      throw ApiError.BadRequest("Некорректный email");
+    }
+  }
+
+  async checkExistingUser(login, email) {
+    const [loginCandidate, emailCandidate] = await Promise.all([
+      User.findOne({ where: { login } }),
+      User.findOne({ where: { email } }),
+    ]);
+
+    return !!(loginCandidate || emailCandidate);
+  }
+
+  async createTempUser(login, password, email) {
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+    const codeExpires = new Date(Date.now() + CODE_EXPIRES_MINUTES * 60 * 1000);
+    const resendCooldown = new Date(
+      Date.now() + RESEND_COOLDOWN_MINUTES * 60 * 1000
+    );
+
+    const tempUser = await TempUser.create({
+      login,
+      password: await bcrypt.hash(password, 4),
+      email,
+      verificationCode,
+      codeExpires,
+      resendCooldown,
+    });
+
+    return tempUser;
+  }
+
+  prepareTempUserResponse(tempUser) {
     return {
       tempUserId: tempUser.id,
       resendCooldown: tempUser.resendCooldown,
@@ -177,6 +248,7 @@ class UserService {
       ...tokens,
     };
   }
+
   async logout(refreshToken) {
     const token = await tokenService.removeToken(refreshToken);
     return token;

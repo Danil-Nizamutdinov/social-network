@@ -9,6 +9,13 @@ const User = sequelize.define("user", {
   password: { type: DataTypes.STRING },
 });
 
+const LoginAttempt = sequelize.define("LoginAttempt", {
+  email: { type: DataTypes.STRING, allowNull: false, unique: true },
+  attemptCount: { type: DataTypes.INTEGER, defaultValue: 0 },
+  lastAttempt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+  blockedUntil: { type: DataTypes.DATE, allowNull: true },
+});
+
 const TempUser = sequelize.define("TempUser", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   login: { type: DataTypes.STRING, allowNull: false, unique: true },
@@ -122,4 +129,5 @@ module.exports = {
   CommentReaction,
   UserSubscriptions,
   TempUser,
+  LoginAttempt,
 };

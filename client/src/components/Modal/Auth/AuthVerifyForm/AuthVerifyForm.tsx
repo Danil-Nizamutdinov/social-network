@@ -2,6 +2,7 @@ import ButtonBlue from "@src/components/ButtonBlue/ButtonBlue";
 import Input from "@src/components/Input/Input";
 import { useAppDispatch } from "@src/hooks/redux";
 import {
+  loginVerify,
   registrationVerify,
   resendVerificationCode,
 } from "@src/store/reducers/ActionCreators/UserAC";
@@ -15,12 +16,14 @@ interface Props {
   tempUserId: number;
   canResendCode: boolean;
   secondsLeft: number;
+  isRegForm: boolean;
 }
 
 const AuthVerifyForm: React.FC<Props> = ({
   tempUserId,
   canResendCode,
   secondsLeft,
+  isRegForm,
 }) => {
   const [code, setCode] = useState<string>("");
   const isDisabled = !code;
@@ -29,7 +32,11 @@ const AuthVerifyForm: React.FC<Props> = ({
 
   const auth = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(registrationVerify({ tempUserId, code }));
+    if (isRegForm) {
+      dispatch(registrationVerify({ tempUserId, code }));
+    } else {
+      dispatch(loginVerify({ tempUserId, code }));
+    }
   };
 
   const resendCode = () => {

@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "@src/hooks/redux";
 import ButtonImg from "@src/components/ButtonImg/ButtonImg";
 import cross from "@src/assets/cross.png";
 import { toggleFalse, toggleReg } from "@src/store/reducers/toggleSlice";
+import { clearError } from "@src/store/reducers/userSlice";
 import useCooldownTimer from "@src/hooks/useCooldownTimer";
 import styles from "./auth.module.scss";
 import AuthForm from "./AuthForm/AuthForm";
@@ -17,6 +18,11 @@ const Auth: React.FC = () => {
   );
 
   const dispatch = useAppDispatch();
+
+  const handleReg = () => {
+    dispatch(toggleReg(!isRegForm));
+    dispatch(clearError());
+  };
 
   const secondsLeft = useCooldownTimer(resendCooldownCode);
 
@@ -41,17 +47,14 @@ const Auth: React.FC = () => {
             tempUserId={tempUserId}
             canResendCode={canResendCode}
             secondsLeft={secondsLeft}
+            isRegForm={isRegForm}
           />
         ) : (
           <AuthForm isRegForm={isRegForm} />
         )}
       </div>
       {buttonText && (
-        <button
-          type="button"
-          className={styles.button}
-          onClick={() => dispatch(toggleReg(!isRegForm))}
-        >
+        <button type="button" className={styles.button} onClick={handleReg}>
           {buttonText}
         </button>
       )}

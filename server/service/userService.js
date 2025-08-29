@@ -46,34 +46,7 @@ class UserService {
   }
 
   async verifyRegistration(tempUserId, code) {
-    const tempUser = await TempUser.findByPk(tempUserId);
-
-    if (!tempUser) {
-      throw ApiError.BadRequest("ошибка tempUser");
-    }
-
-    const loginAttempt = await this.checkAndUpdateLoginAttempt(tempUser.email);
-
-    const now = new Date();
-
-    if (tempUser.verificationCode !== code) {
-      loginAttempt.attemptCount += 1;
-      loginAttempt.lastAttempt = now;
-
-      if (loginAttempt.attemptCount >= MAX_ATTEMPTS) {
-        loginAttempt.blockedUntil = new Date(
-          Date.now() + BLOCK_DURATION_MINUTES * 60 * 1000
-        );
-      }
-
-      await loginAttempt.save();
-
-      throw ApiError.BadRequest("Неверный код подтверждения");
-    }
-
-    if (new Date() > tempUser.codeExpires) {
-      throw ApiError.BadRequest("Код подтверждения истек");
-    }
+    const tempUser = await this.validateVerification(tempUserId, code);
 
     const user = await User.create({
       avatar: "ava.png",
@@ -100,6 +73,37 @@ class UserService {
       },
       ...tokens,
     };
+  }
+
+  async validateVerification(tempUserId, code) {
+    const tempUser = await TempUser.findByPk(tempUserId);
+
+    if (!tempUser) {
+      throw ApiError.BadRequest("Ошибка tempUser");
+    }
+
+    const loginAttempt = await this.checkAndUpdateLoginAttempt(tempUser.email);
+    const now = new Date();
+
+    if (tempUser.verificationCode !== code) {
+      loginAttempt.attemptCount += 1;
+      loginAttempt.lastAttempt = now;
+
+      if (loginAttempt.attemptCount >= MAX_ATTEMPTS) {
+        loginAttempt.blockedUntil = new Date(
+          Date.now() + BLOCK_DURATION_MINUTES * 60 * 1000
+        );
+      }
+
+      await loginAttempt.save();
+      throw ApiError.BadRequest("Неверный код подтверждения");
+    }
+
+    if (new Date() > tempUser.codeExpires) {
+      throw ApiError.BadRequest("Код подтверждения истек");
+    }
+
+    return tempUser;
   }
 
   async resendVerificationCode(tempUserId) {
@@ -228,14 +232,43 @@ class UserService {
     if (!user) {
       throw ApiError.BadRequest("Пользователь с таким login не найден");
     }
+
     const isPassEquals = await bcrypt.compare(password, user.password);
     if (!isPassEquals) {
       throw ApiError.BadRequest("Неверный пароль");
     }
+
+    const candidateTempUser = await TempUser.findOne({
+      where: { email: user.email },
+    });
+
+    if (candidateTempUser) {
+      return this.prepareTempUserResponse(candidateTempUser);
+    }
+
+    const tempUser = await this.createTempUser(login, password, user.email);
+
+    await mailService.sendVerificationCode(
+      user.email,
+      tempUser.verificationCode
+    );
+
+    return this.prepareTempUserResponse(tempUser);
+  }
+
+  async verifyLogin(tempUserId, code) {
+    const tempUser = await this.validateVerification(tempUserId, code);
+
+    const user = await User.findOne({ where: { login: tempUser.login } });
+    if (!user) {
+      throw ApiError.BadRequest("Пользователь с таким login не найден");
+    }
+
     const tokens = tokenService.generateTokens({
       login: user.login,
       id: user.id,
     });
+
     await tokenService.saveToken(user.id, tokens.refreshToken);
 
     return {

@@ -1,21 +1,31 @@
 import { AxiosResponse } from "axios";
-import { AuthResponse, AuthResponseRegStart } from "@src/types/main";
+import { AuthResponse, AuthStart } from "@src/types/main";
 import { api } from "./index";
 
 const authApi = {
-  async login(
+  async loginStart(
     login: string,
     password: string
+  ): Promise<AxiosResponse<AuthStart>> {
+    return api.post<AuthStart>("user/login/start", { login, password });
+  },
+
+  async loginVerify(
+    tempUserId: number,
+    code: string
   ): Promise<AxiosResponse<AuthResponse>> {
-    return api.post<AuthResponse>("user/login", { login, password });
+    return api.post<AuthResponse>("user/login/verify", {
+      tempUserId,
+      code,
+    });
   },
 
   async registrationStart(
     email: string,
     login: string,
     password: string
-  ): Promise<AxiosResponse<AuthResponseRegStart>> {
-    return api.post<AuthResponseRegStart>("user/registration/start", {
+  ): Promise<AxiosResponse<AuthStart>> {
+    return api.post<AuthStart>("user/registration/start", {
       login,
       password,
       email,
@@ -24,8 +34,8 @@ const authApi = {
 
   async resendVerificationCode(
     tempUserId: number
-  ): Promise<AxiosResponse<AuthResponseRegStart>> {
-    return api.post<AuthResponseRegStart>("user/registration/resend_code", {
+  ): Promise<AxiosResponse<AuthStart>> {
+    return api.post<AuthStart>("user/registration/resend_code", {
       tempUserId,
     });
   },

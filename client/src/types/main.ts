@@ -49,7 +49,7 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
-export interface AuthResponseRegStart {
+export interface AuthStart {
   tempUserId: number;
   resendCooldown: string;
   message: string;

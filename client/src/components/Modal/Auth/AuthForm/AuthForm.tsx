@@ -3,9 +3,10 @@ import Input from "@src/components/Input/Input";
 import React, { useState } from "react";
 import { useAppDispatch } from "@src/hooks/redux";
 import {
-  login,
+  loginStart,
   registrationStart,
 } from "@src/store/reducers/ActionCreators/UserAC";
+import { clearError, setNewError } from "@src/store/reducers/userSlice";
 import styles from "./auth-form.module.scss";
 
 interface AuthFormProps {
@@ -25,9 +26,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ isRegForm }) => {
   const auth = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isRegForm) {
-      dispatch(registrationStart({ email, loginText, password }));
+      if (password === password2) {
+        dispatch(registrationStart({ email, loginText, password }));
+        dispatch(clearError());
+      } else {
+        dispatch(setNewError("Пароли не совпадают"));
+      }
     } else {
-      dispatch(login({ loginText, password }));
+      dispatch(loginStart({ loginText, password }));
     }
   };
 

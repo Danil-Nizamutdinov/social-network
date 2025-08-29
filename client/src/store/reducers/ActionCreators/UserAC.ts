@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import authApi from "@src/api/AuthApi";
 import { AppDispatch } from "@src/store/store";
-import { AuthResponse, AuthResponseRegStart } from "@src/types/main";
+import { AuthResponse, AuthStart } from "@src/types/main";
 import { isAxiosError } from "axios";
 import { toggleFalse } from "../toggleSlice";
 
@@ -16,38 +16,52 @@ interface ArgReg {
   password: string;
 }
 
-interface ArgRegVerify {
+interface ArgVerify {
   tempUserId: number;
   code: string;
 }
 
-export const login = createAsyncThunk<
-  AuthResponse,
+export const loginStart = createAsyncThunk<
+  AuthStart,
   ArgLogin,
   {
     rejectValue: string;
-    dispatch: AppDispatch;
   }
->(
-  "user/login",
-  async ({ loginText, password }, { rejectWithValue, dispatch }) => {
-    try {
-      const res = await authApi.login(loginText, password);
-      dispatch(toggleFalse());
-      return res.data;
-    } catch (error) {
-      if (isAxiosError(error)) {
-        return rejectWithValue(
-          error.response?.data.message || "Произошла ошибка"
-        );
-      }
-      return rejectWithValue("Неизвестная ошибка");
+>("user/loginStart", async ({ loginText, password }, { rejectWithValue }) => {
+  try {
+    const res = await authApi.loginStart(loginText, password);
+    return res.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data.message || "Произошла ошибка"
+      );
     }
+    return rejectWithValue("Неизвестная ошибка");
   }
-);
+});
+
+export const loginVerify = createAsyncThunk<
+  AuthResponse,
+  ArgVerify,
+  { rejectValue: string; dispatch: AppDispatch }
+>("user/login", async ({ tempUserId, code }, { rejectWithValue, dispatch }) => {
+  try {
+    const res = await authApi.loginVerify(tempUserId, code);
+    dispatch(toggleFalse());
+    return res.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return rejectWithValue(
+        error.response?.data.message || "Произошла ошибка"
+      );
+    }
+    return rejectWithValue("Неизвестная ошибка");
+  }
+});
 
 export const registrationStart = createAsyncThunk<
-  AuthResponseRegStart,
+  AuthStart,
   ArgReg,
   { rejectValue: string }
 >(
@@ -68,7 +82,7 @@ export const registrationStart = createAsyncThunk<
 );
 
 export const resendVerificationCode = createAsyncThunk<
-  AuthResponseRegStart,
+  AuthStart,
   number,
   { rejectValue: string }
 >("user/resendVerificationCode", async (tempUserId, { rejectWithValue }) => {
@@ -87,7 +101,7 @@ export const resendVerificationCode = createAsyncThunk<
 
 export const registrationVerify = createAsyncThunk<
   AuthResponse,
-  ArgRegVerify,
+  ArgVerify,
   { rejectValue: string; dispatch: AppDispatch }
 >(
   "user/registration",

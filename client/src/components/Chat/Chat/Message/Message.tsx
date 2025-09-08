@@ -11,7 +11,7 @@ const Message: React.FC<Props> = ({ message, userId }) => {
   return (
     <p
       className={
-        message.userId === userId
+        message.senderId === userId
           ? `${styles.message_active} ${styles.message_box}`
           : `${styles.message} ${styles.message_box}`
       }

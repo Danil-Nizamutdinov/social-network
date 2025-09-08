@@ -6,6 +6,7 @@ export enum ActiveToggle {
   ADD_VIDEO = "addVideo",
   DESCRIPTION = "description",
   BACKGROUND = "background",
+  CONTACT = "contact",
   NONE = "",
 }
 
@@ -85,20 +86,54 @@ export interface INavLink {
 }
 
 export interface IChat {
+  Members: any;
+  Messages: IMessage[];
+  Users: IUser[];
   createdAt: string;
+  description: null | string;
   id: number;
-  lastMessage: string;
+  name: null | string;
+  type: string;
   updatedAt: string;
-  user1Id: number;
-  user2Id: number;
-  users: IUser[];
 }
 
 export interface IMessage {
+  id: number;
   chatId: number;
+  senderId: number;
   content: string;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface IIncoming {
+  User: IUser;
+  createdAt: string;
+  friendId: number;
   id: number;
+  status: string;
+  updatedAt: string;
+  userId: number;
+}
+
+export interface ISendFriendRequestResponse {
+  incoming: IIncoming[];
+  outgoing: any;
+}
+
+export interface IContact {
+  avatar: string;
+  email: string;
+  id: number;
+  login: string;
+}
+
+export interface IGetContactsResponse {
+  Friend: IContact;
+  createdAt: string;
+  friendId: number;
+  id: number;
+  status: string;
   updatedAt: string;
   userId: number;
 }

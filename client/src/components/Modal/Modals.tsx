@@ -8,6 +8,7 @@ import Profile from "./Profile/Profile";
 import AddVideo from "./AddVideo/AddVideo";
 import ChangeDescription from "./ChangeDescription/ChangeDescription";
 import ChangeBackground from "./ChangeBackground/ChangeBackground";
+import Contact from "./Contact/Contact";
 
 const Modals: React.FC = () => {
   const activeToggle = useAppSelector(
@@ -33,6 +34,9 @@ const Modals: React.FC = () => {
       </Modal>
       <Modal isModal={activeToggle === ActiveToggle.BACKGROUND} isMenu={false}>
         <ChangeBackground />
+      </Modal>
+      <Modal isModal={activeToggle === ActiveToggle.CONTACT} isMenu={false}>
+        <Contact />
       </Modal>
     </div>
   );

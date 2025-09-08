@@ -3,6 +3,7 @@ import videoApi from "@src/services/VideoService";
 import channelApi from "@src/services/ChannelService";
 import chatApi from "@src/services/ChatService";
 import reactionApi from "@src/services/ReactionService";
+import contactApi from "@src/services/contactService";
 import toggleReducer from "./reducers/toggleSlice";
 import userReducer from "./reducers/userSlice";
 
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   [channelApi.reducerPath]: channelApi.reducer,
   [chatApi.reducerPath]: chatApi.reducer,
   [reactionApi.reducerPath]: reactionApi.reducer,
+  [contactApi.reducerPath]: contactApi.reducer,
   toggleReducer,
   userReducer,
 });
@@ -22,7 +24,8 @@ export const store = configureStore({
       videoApi.middleware,
       channelApi.middleware,
       chatApi.middleware,
-      reactionApi.middleware
+      reactionApi.middleware,
+      contactApi.middleware
     ),
 });
 

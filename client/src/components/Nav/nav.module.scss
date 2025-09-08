@@ -17,3 +17,27 @@
     top: 75px;
   }
 }
+
+.link_item {
+  display: block;
+  transition: 0.3s ease;
+  padding: 8px 20px;
+  width: 90%;
+  color: var(--font-color);
+  cursor: pointer;
+  @media (hover: hover) {
+    &:hover {
+      background: var(--secondary-dark-blue);
+      border-top-right-radius: 7px;
+      border-bottom-right-radius: 7px;
+    }
+  }
+}
+
+.link_item {
+  display: flex;
+  align-items: center;
+  & img {
+    margin-right: 10px;
+  }
+}

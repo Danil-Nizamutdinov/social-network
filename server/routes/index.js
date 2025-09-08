@@ -7,6 +7,7 @@ const videoRouter = require("./videoRouter");
 const channelRouter = require("./channelRouter");
 const reactionRouter = require("./reactionRouter");
 const commentRouter = require("./commentRouter");
+const friendRouter = require("./friendRouter");
 
 router.use("/user", userRouter);
 router.use("/chat", chatRouter);
@@ -15,5 +16,6 @@ router.use("/video", videoRouter);
 router.use("/channel", channelRouter);
 router.use("/reaction", reactionRouter);
 router.use("/comment", commentRouter);
+router.use("/friend", friendRouter);
 
 module.exports = router;

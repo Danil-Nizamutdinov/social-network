@@ -1,0 +1,47 @@
+@use "@src/style/vars.scss" as *;
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--background-color-popup);
+
+  display: flex;
+  flex-direction: column;
+  @media (min-width: $mobile) {
+    width: 375px;
+    max-height: 65%;
+    border-radius: 7px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0px;
+  padding: 20px;
+  padding-bottom: 30px;
+  h1 {
+    font-size: 20px;
+    font-weight: 300;
+  }
+}
+
+footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  border-top: 1px solid rgba($color: #000000, $alpha: 0.4);
+  & button {
+    font-size: 14px;
+    font-weight: medium;
+    color: var(--primary-light-blue);
+  }
+}

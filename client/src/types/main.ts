@@ -106,7 +106,7 @@ export interface IMessage {
   updatedAt: string;
 }
 
-export interface IIncoming {
+export interface IRequest {
   User: IUser;
   createdAt: string;
   friendId: number;
@@ -117,8 +117,8 @@ export interface IIncoming {
 }
 
 export interface ISendFriendRequestResponse {
-  incoming: IIncoming[];
-  outgoing: any;
+  incoming: IRequest[];
+  outgoing: IRequest[];
 }
 
 export interface IContact {

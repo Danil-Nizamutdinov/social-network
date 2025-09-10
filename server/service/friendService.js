@@ -77,6 +77,8 @@ class FriendService {
       }
 
       await chatService.createPrivateChat(userId, friendRequest.userId);
+    } else {
+      await friendRequest.destroy();
     }
 
     const result = `Запрос в друзья ${
@@ -109,9 +111,19 @@ class FriendService {
       ],
     });
 
+    const formattedOutgoing = outgoingRequests.map((request) => ({
+      User: request.Friend,
+      createdAt: request.createdAt,
+      friendId: request.friendId,
+      id: request.id,
+      status: request.status,
+      updatedAt: request.updatedAt,
+      userId: request.userId,
+    }));
+
     return {
       incoming: incomingRequests,
-      outgoing: outgoingRequests,
+      outgoing: formattedOutgoing,
     };
   }
 

@@ -4,10 +4,10 @@ import { api } from "./index";
 
 const authApi = {
   async loginStart(
-    login: string,
+    email: string,
     password: string
   ): Promise<AxiosResponse<AuthStart>> {
-    return api.post<AuthStart>("user/login/start", { login, password });
+    return api.post<AuthStart>("user/login/start", { email, password });
   },
 
   async loginVerify(

@@ -227,10 +227,10 @@ class UserService {
     };
   }
 
-  async login(login, password) {
-    const user = await User.findOne({ where: { login } });
+  async login(email, password) {
+    const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw ApiError.BadRequest("Пользователь с таким login не найден");
+      throw ApiError.BadRequest("Пользователь с таким email не найден");
     }
 
     const isPassEquals = await bcrypt.compare(password, user.password);
@@ -246,7 +246,11 @@ class UserService {
       return this.prepareTempUserResponse(candidateTempUser);
     }
 
-    const tempUser = await this.createTempUser(login, password, user.email);
+    const tempUser = await this.createTempUser(
+      user.login,
+      password,
+      user.email
+    );
 
     await mailService.sendVerificationCode(
       user.email,

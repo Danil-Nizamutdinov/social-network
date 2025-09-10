@@ -1,31 +1,35 @@
 import Absence from "@src/components/Absence/Absence";
 import Loading from "@src/components/Loading/Loading";
-import { useGetRequestQuery } from "@src/services/contactService";
-import { IIncoming } from "@src/types/main";
+import { ISendFriendRequestResponse } from "@src/types/main";
 import React from "react";
-import IncomingItem from "./IncomingItem/IncomingItem";
 import styles from "./incoming.module.scss";
+import RequestItem from "./IncomingItem/RequestItem";
 
 interface Props {
   userId: number;
+  data: ISendFriendRequestResponse | undefined;
+  isLoading: boolean;
+  type: string;
 }
 
-const Incoming: React.FC<Props> = ({ userId }) => {
-  const { data, isLoading } = useGetRequestQuery(userId);
+const RequestList: React.FC<Props> = ({ userId, data, isLoading, type }) => {
   if (isLoading) return <Loading />;
   if (!data) return <Absence />;
+
+  const requests = type === "incoming" ? data.incoming : data.outgoing;
   return (
     <div className={styles.wrapper}>
-      {data.incoming.length === 0 ? (
+      {requests.length === 0 ? (
         <Absence />
       ) : (
-        data.incoming.map((el: IIncoming) => (
-          <IncomingItem
+        requests.map((el: any) => (
+          <RequestItem
             avatar={el.User.avatar}
             login={el.User.login}
             requestId={el.id}
             userId={userId}
             key={el.id}
+            type={type}
           />
         ))
       )}
@@ -33,4 +37,4 @@ const Incoming: React.FC<Props> = ({ userId }) => {
   );
 };
 
-export default Incoming;
+export default RequestList;

@@ -19,7 +19,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ isRegForm }) => {
   const [password, setPassword] = useState<string>("");
   const [password2, setPassword2] = useState<string>("");
 
-  const isDisabled = !(loginText && password);
+  const isDisabledReg = !(loginText && password && email);
+  const isDisabledLogin = !(password && email);
+  const isDisabled = isRegForm ? isDisabledReg : isDisabledLogin;
 
   const dispatch = useAppDispatch();
 
@@ -33,7 +35,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isRegForm }) => {
         dispatch(setNewError("Пароли не совпадают"));
       }
     } else {
-      dispatch(loginStart({ loginText, password }));
+      dispatch(loginStart({ email, password }));
     }
   };
 
@@ -41,17 +43,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ isRegForm }) => {
     <form className={styles.form} onSubmit={auth}>
       {isRegForm && (
         <Input
-          value={email}
-          setValue={setEmail}
-          placeholder="email"
-          type="email"
+          value={loginText}
+          setValue={setLoginText}
+          placeholder="login"
+          type="text"
         />
       )}
       <Input
-        value={loginText}
-        setValue={setLoginText}
-        placeholder="login"
-        type="text"
+        value={email}
+        setValue={setEmail}
+        placeholder="email"
+        type="email"
       />
       <Input
         value={password}

@@ -45,3 +45,12 @@ footer {
     color: var(--primary-light-blue);
   }
 }
+
+.add {
+  position: absolute;
+  right: 20px;
+  bottom: 70px;
+  & img {
+    width: 40px;
+  }
+}

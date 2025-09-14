@@ -56,6 +56,8 @@ const chatApi = createApi({
   }),
 });
 
+export const { util } = chatApi;
+
 export const {
   useGetChatsQuery,
   useGetChatQuery,

@@ -4,6 +4,7 @@ import { apiUrlStatic } from "@src/api";
 import { useRespondToRequestMutation } from "@src/services/contactService";
 import { useAppDispatch } from "@src/hooks/redux";
 import { toggleFalse } from "@src/store/reducers/toggleSlice";
+import { util } from "@src/services/ChatService";
 import styles from "./incoming-item.module.scss";
 
 interface Props {
@@ -28,6 +29,7 @@ const RequestItem: React.FC<Props> = ({
   const handleAccept = () => {
     respondToRequest({ requestId, status: "accepted", userId });
     dispatch(toggleFalse());
+    dispatch(util.invalidateTags(["getChat"]));
   };
   const handleCancel = () => {
     respondToRequest({ requestId, status: "rejected", userId });

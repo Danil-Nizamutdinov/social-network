@@ -9,11 +9,15 @@ module.exports = associations = (models) => {
     Comment,
     Friend,
     ChatMember,
+    Notification,
   } = models;
 
   User.hasMany(Friend, { as: "Friendships", foreignKey: "userId" });
   Friend.belongsTo(User, { as: "User", foreignKey: "userId" });
   Friend.belongsTo(User, { as: "Friend", foreignKey: "friendId" });
+
+  Notification.belongsTo(User, { as: "Sender", foreignKey: "senderId" });
+  Notification.belongsTo(User, { as: "Receiver", foreignKey: "receiverId" });
 
   User.hasMany(Message, { as: "Messages", foreignKey: "senderId" });
   Message.belongsTo(User, { as: "Sender", foreignKey: "senderId" });

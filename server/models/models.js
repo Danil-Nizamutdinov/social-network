@@ -16,6 +16,8 @@ const VideoReaction = require("./reaction/VideoReaction");
 const CommentReaction = require("./reaction/CommentReaction");
 const UserSubscriptions = require("./reaction/UserSubscriptions");
 
+const Notification = require("./Notification/Notification");
+
 require("./associations")({
   User,
   Token,
@@ -26,6 +28,7 @@ require("./associations")({
   Comment,
   Friend,
   ChatMember,
+  Notification,
 });
 
 module.exports = {
@@ -43,4 +46,5 @@ module.exports = {
   TempUser,
   LoginAttempt,
   Friend,
+  Notification,
 };

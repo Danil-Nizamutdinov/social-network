@@ -8,9 +8,11 @@ import styles from "./chat-list.module.scss";
 
 const ChatList: React.FC<{ userId: number }> = ({ userId }) => {
   const { data: chats, isLoading } = useGetChatsQuery(userId);
+
   if (isLoading) return <Loading />;
   if (!chats) return <Absence />;
   if (chats.length === 0) return <Absence />;
+
   return (
     <div className={styles.chat_list}>
       {chats.map((chat: IChat) => (

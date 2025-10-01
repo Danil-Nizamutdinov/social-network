@@ -1,6 +1,6 @@
 const sequelize = require("../../db");
 const { DataTypes } = require("sequelize");
-const { User } = require("../models");
+const { User, Chat } = require("../models");
 
 const Friend = sequelize.define("friend", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -17,6 +17,11 @@ const Friend = sequelize.define("friend", {
   status: {
     type: DataTypes.ENUM("pending", "accepted", "rejected", "blocked"),
     defaultValue: "pending",
+  },
+  chatId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: { model: Chat, key: "id" },
   },
 });
 

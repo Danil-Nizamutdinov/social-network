@@ -101,6 +101,7 @@ class ChatService {
     }
     return chatMember;
   }
+  async delPrivateChat(userId, friendId) {}
 }
 
 module.exports = new ChatService();

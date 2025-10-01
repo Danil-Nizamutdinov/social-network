@@ -42,6 +42,15 @@ class FriendController {
       next(e);
     }
   }
+  async delFriend(req, res, next) {
+    try {
+      const { userId, friendId } = req.body;
+      const result = await friendService.delFriend(userId, friendId);
+      return res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 module.exports = new FriendController();

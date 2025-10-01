@@ -1,7 +1,8 @@
-const { Friend, User } = require("../models/models");
+const { Friend, User, Message, Chat } = require("../models/models");
 const ApiError = require("../exceptions/apiError");
 const chatService = require("./chatService");
 const { sseService } = require("./sseService");
+const { Sequelize } = require("../db");
 
 class FriendService {
   async sendFriendRequest(userId, login) {
@@ -64,6 +65,10 @@ class FriendService {
     await Friend.update({ status: status }, { where: { id: requestId } });
 
     if (status === "accepted") {
+      const chat = await chatService.createPrivateChat(
+        userId,
+        friendRequest.userId
+      );
       const reverseFriendship = await Friend.findOne({
         where: {
           userId: friendRequest.friendId,
@@ -71,15 +76,15 @@ class FriendService {
         },
       });
 
+      await Friend.update({ chatId: chat.id }, { where: { id: requestId } });
       if (!reverseFriendship) {
         await Friend.create({
           userId: friendRequest.friendId,
           friendId: friendRequest.userId,
           status: "accepted",
+          chatId: chat.id,
         });
       }
-
-      await chatService.createPrivateChat(userId, friendRequest.userId);
     } else {
       await friendRequest.destroy();
     }
@@ -148,6 +153,25 @@ class FriendService {
     });
 
     return friends;
+  }
+
+  async delFriend(userId, friendId) {
+    const friend = await Friend.findOne({
+      where: { friendId },
+    });
+    if (!friend) throw new Error("Друг не найден");
+
+    const chatId = friend.chatId;
+
+    await Message.destroy({ where: { chatId } });
+
+    await Chat.destroy({ where: { id: chatId } });
+
+    await Friend.destroy({ where: { friendId } });
+
+    await Friend.destroy({ where: { friendId: userId } });
+
+    return { message: "200" };
   }
 }
 

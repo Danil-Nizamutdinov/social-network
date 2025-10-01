@@ -25,6 +25,9 @@ module.exports = associations = (models) => {
   Chat.hasMany(Message, { as: "Messages", foreignKey: "chatId" });
   Message.belongsTo(Chat, { as: "Chat", foreignKey: "chatId" });
 
+  Chat.hasOne(Friend, { foreignKey: "chatId" });
+  Friend.belongsTo(Chat, { foreignKey: "chatId" });
+
   Chat.hasMany(ChatMember, { as: "Members", foreignKey: "chatId" });
   ChatMember.belongsTo(Chat, { as: "Chat", foreignKey: "chatId" });
 

@@ -1,8 +1,8 @@
 import { IMessage } from "@src/types/main";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@src/hooks/redux";
-import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import useChatSocket from "@src/hooks/useChatSocket";
 import Chat from "./Chat/Chat";
 import Absence from "../Absence/Absence";
 import Loading from "../Loading/Loading";
@@ -17,19 +17,7 @@ const ChatContainer: React.FC<Props> = ({ login, chatId }) => {
   const user = useAppSelector((state) => state.userReducer.user);
   const navigate = useNavigate();
 
-  const socket = useMemo(
-    () =>
-      io("http://localhost:3000", {
-        autoConnect: false,
-        auth: {
-          token: localStorage.getItem("token"),
-        },
-        query: {
-          chatId,
-        },
-      }),
-    [chatId]
-  );
+  const socket = useChatSocket(chatId);
 
   useEffect(() => {
     function onMessage(data: any) {
@@ -41,7 +29,8 @@ const ChatContainer: React.FC<Props> = ({ login, chatId }) => {
     socket.on("message", onMessage);
     socket.on("getMessages", onMessage);
 
-    socket.on("connect_error", () => {
+    socket.on("connect_error", (err) => {
+      console.log(err);
       navigate("/video");
     });
 

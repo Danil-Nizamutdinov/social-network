@@ -61,6 +61,8 @@ const contactApi = createApi({
   }),
 });
 
+export const { util } = contactApi;
+
 export const {
   useGetContactsQuery,
   useGetRequestQuery,

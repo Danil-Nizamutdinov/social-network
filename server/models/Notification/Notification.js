@@ -8,10 +8,6 @@ const Notification = sequelize.define("notification", {
     primaryKey: true,
     autoIncrement: true,
   },
-  type: {
-    type: DataTypes.ENUM("FRIEND_REQUEST", "FRIEND_ACCEPTED", "MESSAGE"),
-    allowNull: false,
-  },
   message: {
     type: DataTypes.STRING,
     allowNull: false,

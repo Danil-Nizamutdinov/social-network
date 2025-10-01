@@ -87,6 +87,20 @@ class ChatService {
 
     return chat;
   }
+  async getChatMember(chatId, userId) {
+    const chatMember = await ChatMember.findAll({
+      where: {
+        chatId,
+        userId: {
+          [Op.ne]: userId,
+        },
+      },
+    });
+    if (!chatMember) {
+      throw ApiError.BadRequest("Участнки чата не найдены");
+    }
+    return chatMember;
+  }
 }
 
 module.exports = new ChatService();

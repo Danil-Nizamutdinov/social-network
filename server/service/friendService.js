@@ -1,6 +1,7 @@
 const { Friend, User } = require("../models/models");
 const ApiError = require("../exceptions/apiError");
 const chatService = require("./chatService");
+const { sseService } = require("./sseService");
 
 class FriendService {
   async sendFriendRequest(userId, login) {
@@ -33,6 +34,8 @@ class FriendService {
     if (existingRequest || reverseRequest) {
       throw ApiError.BadRequest("Запрос в друзья уже существует");
     }
+
+    sseService.sendNotification(friendId, "contact");
 
     const friendRequest = await Friend.create({
       userId: userId,

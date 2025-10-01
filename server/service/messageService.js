@@ -1,12 +1,15 @@
 const { Message, User } = require("../models/models");
+const { sseService } = require("./sseService");
 
 class MessageService {
-  async addMessage(senderId, chatId, content) {
+  async addMessage(senderId, chatId, content, friendId) {
     const message = await Message.create({
       chatId,
       senderId,
       content,
     });
+
+    sseService.sendNotification(friendId, "message");
 
     return message;
   }

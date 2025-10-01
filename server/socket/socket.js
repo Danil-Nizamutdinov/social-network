@@ -1,12 +1,15 @@
 const messageService = require("../service/messageService");
 const socketAuthMiddleware = require("../middlewares/socketMiddleware/socketAuthMiddleware");
 const socketChatAccessMiddleware = require("../middlewares/socketMiddleware/socketChatAccessMiddleware");
+const chatService = require("../service/chatService");
+const { sseService } = require("../service/sseService");
 
 function initializeSocket(io) {
-  io.use(socketAuthMiddleware);
-  io.use(socketChatAccessMiddleware);
+  const chatNamespace = io.of("/chat");
 
-  io.on("connection", (socket) => {
+  chatNamespace.use(socketAuthMiddleware);
+  chatNamespace.use(socketChatAccessMiddleware);
+  chatNamespace.on("connection", (socket) => {
     socket.on("join", async ({ login, chatId }) => {
       socket.join(chatId);
       const messages = await messageService.getMessages(chatId);
@@ -14,12 +17,21 @@ function initializeSocket(io) {
     });
 
     socket.on("sendMessage", async ({ userId, chatId, content }) => {
-      const message = await messageService.addMessage(userId, chatId, content);
+      const chatMember = await chatService.getChatMember(chatId, userId);
+
+      await messageService.addMessage(
+        userId,
+        chatId,
+        content,
+        chatMember[0].userId
+      );
+
       const messages = await messageService.getMessages(chatId);
-      io.to(chatId).emit("message", messages);
+
+      chatNamespace.to(chatId).emit("message", messages);
     });
 
-    io.on("disconnect", () => {
+    chatNamespace.on("disconnect", () => {
       console.log("Disconnect");
     });
   });

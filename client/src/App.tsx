@@ -8,6 +8,7 @@ import { desktopWidth } from "./vars";
 import { checkAuth } from "./store/reducers/ActionCreators/UserAC";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import Loading from "./components/Loading/Loading";
+import useSse from "./hooks/useSse";
 
 const App: React.FC = () => {
   const width = useWindowWidth();
@@ -17,11 +18,16 @@ const App: React.FC = () => {
 
   const isLoading = useAppSelector((state) => state.userReducer.isLoading);
 
+  const userId = useAppSelector((state) => state.userReducer.user?.id);
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       dispatch(checkAuth());
     }
   }, [dispatch]);
+
+  useSse(userId);
+
   if (isLoading) return <Loading />;
 
   return (

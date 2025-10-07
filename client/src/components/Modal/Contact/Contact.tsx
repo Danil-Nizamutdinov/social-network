@@ -27,16 +27,18 @@ const Contact: React.FC = () => {
       />
 
       <div className={styles.content}>
-        {activeSection === "contacts" && <Contacts userId={userId} />}
-        {activeSection === "add" && <AddContact userId={userId} />}
-        {(activeSection === "incoming" || activeSection === "outgoing") && (
-          <RequestList
-            userId={userId}
-            data={data}
-            isLoading={isLoading}
-            type={activeSection}
-          />
-        )}
+        <div className={styles.content_scroll}>
+          {activeSection === "contacts" && <Contacts userId={userId} />}
+          {activeSection === "add" && <AddContact userId={userId} />}
+          {(activeSection === "incoming" || activeSection === "outgoing") && (
+            <RequestList
+              userId={userId}
+              data={data}
+              isLoading={isLoading}
+              type={activeSection}
+            />
+          )}
+        </div>
       </div>
 
       <span className={styles.add}>

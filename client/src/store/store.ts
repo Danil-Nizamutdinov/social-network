@@ -6,7 +6,7 @@ import reactionApi from "@src/services/ReactionService";
 import contactApi from "@src/services/contactService";
 import toggleReducer from "./reducers/toggleSlice";
 import userReducer from "./reducers/userSlice";
-import notificationSlice from "./reducers/notificationSlice";
+import contactReducer from "./reducers/contactSlice";
 
 const rootReducer = combineReducers({
   [videoApi.reducerPath]: videoApi.reducer,
@@ -16,7 +16,7 @@ const rootReducer = combineReducers({
   [contactApi.reducerPath]: contactApi.reducer,
   toggleReducer,
   userReducer,
-  notificationSlice,
+  contactReducer,
 });
 
 export const store = configureStore({

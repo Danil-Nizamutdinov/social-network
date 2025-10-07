@@ -15,7 +15,7 @@ const Contacts: React.FC<Props> = ({ userId }) => {
   if (isLoading) return <Loading />;
   if (!data) return <Absence />;
   return (
-    <div>
+    <div className={styles.contacts}>
       {data.length === 0 ? (
         <Absence />
       ) : (
@@ -28,6 +28,9 @@ const Contacts: React.FC<Props> = ({ userId }) => {
             <ContactsItem
               avatar={el.Friend.avatar}
               login={el.Friend.login}
+              contactId={el.Friend.id}
+              email={el.Friend.email}
+              chatId={el.chatId}
               key={el.id}
             />
           ))}

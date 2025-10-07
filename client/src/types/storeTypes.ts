@@ -13,3 +13,11 @@ export interface UserState {
   error: string;
   isLoading: boolean;
 }
+
+export interface ContactState {
+  login: string;
+  email: string;
+  avatar: string;
+  contactId: number | null;
+  chatId: number | null;
+}

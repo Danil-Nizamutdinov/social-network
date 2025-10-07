@@ -54,3 +54,18 @@ footer {
     width: 40px;
   }
 }
+
+.content {
+  height: 100%;
+  overflow: auto;
+}
+
+.content::-webkit-scrollbar {
+  width: 9px;
+  height: 10px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
+}

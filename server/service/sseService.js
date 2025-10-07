@@ -7,7 +7,7 @@ class SseService {
     const connection = connections.get(userId);
 
     if (!connection) {
-      throw ApiError.BadRequest("connection не найден");
+      return;
     }
 
     if (connection.destroyed || connection.closed) {

@@ -7,6 +7,7 @@ export enum ActiveToggle {
   DESCRIPTION = "description",
   BACKGROUND = "background",
   CONTACT = "contact",
+  CONTACT_INFO = "contactInfo",
   NONE = "",
 }
 
@@ -136,4 +137,5 @@ export interface IGetContactsResponse {
   status: string;
   updatedAt: string;
   userId: number;
+  chatId: number;
 }

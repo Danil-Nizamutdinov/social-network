@@ -17,6 +17,11 @@ interface RespondToRequest {
   userId: number;
 }
 
+interface DelContactArg {
+  userId: number;
+  friendId: number;
+}
+
 const contactApi = createApi({
   reducerPath: "contactApi",
   baseQuery: axiosBaseQuery({ baseUrl }),
@@ -58,6 +63,14 @@ const contactApi = createApi({
       }),
       invalidatesTags: ["getRequest", "getContacts"],
     }),
+    delContact: build.mutation<void, DelContactArg>({
+      query: (data) => ({
+        url: "friend/del",
+        method: "POST",
+        data,
+      }),
+      invalidatesTags: ["getContacts"],
+    }),
   }),
 });
 
@@ -68,6 +81,7 @@ export const {
   useGetRequestQuery,
   useSendFriendRequestMutation,
   useRespondToRequestMutation,
+  useDelContactMutation,
 } = contactApi;
 
 export default contactApi;

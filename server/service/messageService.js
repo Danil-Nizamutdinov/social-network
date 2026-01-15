@@ -1,20 +1,31 @@
-const { Message, Chat } = require("../models/models");
+const { Message, User } = require("../models/models");
+const { sseService } = require("./sseService");
 
 class MessageService {
-  async addMessage(userId, chatId, content) {
-    const message = await Message.create({ userId, chatId, content });
-    const chat = await Chat.findOne({ where: { id: chatId } });
-    if (chat) {
-      chat.lastMessage = content;
-      chat.save();
-    }
+  async addMessage(senderId, chatId, content, friendId) {
+    const message = await Message.create({
+      chatId,
+      senderId,
+      content,
+    });
+
+    sseService.sendNotification(friendId, "message");
+
     return message;
   }
   async getMessages(chatId) {
     const messages = await Message.findAll({
       where: { chatId },
+      include: [
+        {
+          model: User,
+          as: "Sender",
+          attributes: ["id", "login", "avatar"],
+        },
+      ],
       order: [["createdAt", "ASC"]],
     });
+
     return messages;
   }
 }

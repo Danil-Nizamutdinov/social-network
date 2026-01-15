@@ -3,6 +3,8 @@ import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import smile from "@src/assets/smile.png";
 import send from "@src/assets/send.png";
+import { useAppDispatch } from "@src/hooks/redux";
+import { util } from "@src/services/ChatService";
 import styles from "./message-send.module.scss";
 
 interface Props {
@@ -15,9 +17,12 @@ const MessageSend: React.FC<Props> = ({ socket, userId }) => {
 
   const { id } = useParams();
 
+  const dispatch = useAppDispatch();
+
   const sendMessage = () => {
     socket.emit("sendMessage", { userId, chatId: id, content: message });
     setMessage("");
+    dispatch(util.invalidateTags(["getChat"]));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

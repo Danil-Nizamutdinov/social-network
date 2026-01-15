@@ -1,112 +1,107 @@
-const { Op } = require("sequelize");
-const { Chat, User, Message } = require("../models/models");
+const { User, Chat, ChatMember, Message } = require("../models/models");
 const ApiError = require("../exceptions/apiError");
+const { Op } = require("sequelize");
 
 class ChatService {
-  async createChat(user1Id, user2Id) {
-    if (!user1Id || !user2Id) {
-      throw ApiError.BadRequest("нет id");
-    }
+  async createPrivateChat(userId1, userId2) {
+    const user1 = await User.findByPk(userId1);
+    const user2 = await User.findByPk(userId2);
 
-    const existingChat = await Chat.findOne({
-      where: {
-        [Op.or]: [
-          { user1Id: user1Id, user2Id: user2Id },
-          { user1Id: user2Id, user2Id: user1Id },
-        ],
-      },
-    });
-
-    if (existingChat) {
-      throw ApiError.BadRequest(
-        "Чат между этими пользователями уже существует"
-      );
+    if (!user1 || !user2) {
+      throw ApiError.BadRequest("Пользователь не найден");
     }
 
     const chat = await Chat.create({
-      user1Id,
-      user2Id,
-      lastMessage: "Пока что у вас нет сообщений в этом чате",
+      type: "private",
     });
-    if (!chat) throw ApiError.BadRequest("chat не создался");
-    await chat.addUsers(user1Id);
-    await chat.addUsers(user2Id);
-    return chat;
+
+    await ChatMember.bulkCreate([
+      { chatId: chat.id, userId: userId1, role: "owner" },
+      { chatId: chat.id, userId: userId2, role: "owner" },
+    ]);
+
+    const createdChat = await Chat.findByPk(chat.id, {
+      include: [
+        {
+          model: User,
+          as: "Users",
+          through: { attributes: ["role"] },
+          attributes: ["id", "login", "email"],
+        },
+      ],
+    });
+
+    return createdChat;
   }
-  async getChats(userId) {
-    if (!userId) {
-      throw ApiError.BadRequest("нет id");
-    }
+  async getPrivateChats(userId) {
     const chats = await Chat.findAll({
       where: {
-        [Op.or]: [{ user1Id: userId }, { user2Id: userId }],
+        type: "private",
       },
       include: [
         {
+          model: ChatMember,
+          as: "Members",
+          where: { userId },
+          attributes: ["role"],
+        },
+        {
+          model: Message,
+          as: "Messages",
+          attributes: ["id", "content", "senderId", "createdAt"],
+          order: [["createdAt", "DESC"]],
+          limit: 1,
+          separate: true,
+        },
+        {
           model: User,
+          as: "Users",
           where: {
             id: {
               [Op.ne]: userId,
             },
           },
-          attributes: { exclude: ["password"] },
-          through: {
-            attributes: [],
-          },
+          attributes: ["id", "login", "avatar"],
+          through: { attributes: [] },
         },
       ],
     });
-    if (!chats) {
-      throw ApiError.BadRequest("chat не найден");
-    }
+
     return chats;
   }
-  async getChat(chatId, userId) {
-    if (!chatId) {
-      return res.json({ message: "ничего нет id" });
-    }
-
-    const chat = await Chat.findOne({
-      where: { id: chatId },
+  async getPrivateChat(chatId, userId) {
+    const chat = await Chat.findByPk(chatId, {
       include: [
         {
           model: User,
+          as: "Users",
           where: {
             id: {
               [Op.ne]: userId,
             },
           },
-          attributes: { exclude: ["password"] },
-          through: {
-            attributes: [],
-          },
+          attributes: ["id", "login", "avatar"],
         },
       ],
     });
 
-    if (!chat) {
-      return res.json({ message: "ничего нет" });
-    }
     return chat;
   }
-
-  async deleteChat(chatId) {
-    if (!chatId) {
-      throw ApiError.BadRequest("нет id");
-    }
-    const delChat = await Chat.destroy({
+  async getChatMember(chatId, userId) {
+    const chatMember = await ChatMember.findAll({
       where: {
-        id: chatId,
+        chatId,
+        userId: {
+          [Op.ne]: userId,
+        },
       },
-      include: Message,
     });
-
-    if (!delChat) {
-      throw ApiError.BadRequest("что то пошло не так, чат не удалился");
+    if (!chatMember) {
+      throw ApiError.BadRequest("Участнки чата не найдены");
     }
-
-    return delChat;
+    return chatMember;
   }
+  async delPrivateChat(userId, friendId) {}
 }
 
 module.exports = new ChatService();

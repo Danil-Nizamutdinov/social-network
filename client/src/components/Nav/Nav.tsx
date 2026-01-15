@@ -1,9 +1,12 @@
 import React from "react";
-import { INavLink } from "@src/types/main";
+import { ActiveToggle, INavLink } from "@src/types/main";
 import message from "@src/assets/message.png";
 import video from "@src/assets/video.png";
 import musical from "@src/assets/musical-note.png";
 import chat from "@src/assets/chat-room.png";
+import contact from "@src/assets/contact.png";
+import { useAppDispatch } from "@src/hooks/redux";
+import { toggle } from "@src/store/reducers/toggleSlice";
 import styles from "./nav.module.scss";
 import NavItem from "./NavItem/NavItem";
 
@@ -15,9 +18,23 @@ const navLinks: INavLink[] = [
 ];
 
 const Nav = () => {
+  const dispatch = useAppDispatch();
+
+  const handleContact = () => {
+    dispatch(toggle(ActiveToggle.CONTACT));
+  };
+
   return (
     <div className={styles.nav_wrapper}>
       <nav className={styles.nav}>
+        <button
+          className={styles.link_item}
+          type="button"
+          onClick={handleContact}
+        >
+          <img src={contact} alt={contact} />
+          Контакты
+        </button>
         {navLinks.map((link) => (
           <NavItem
             to={link.to}

@@ -14,10 +14,10 @@ module.exports = async function (socket, next) {
       return next(ApiError.UnauthorizedError());
     }
 
-    const isParticipant = [chat.user1Id, chat.user2Id].includes(socket.user.id);
-    if (!isParticipant) {
-      return next(ApiError.UnauthorizedError());
-    }
+    // const isParticipant = [chat.user1Id, chat.user2Id].includes(socket.user.id);
+    // if (!isParticipant) {
+    //   return next(ApiError.UnauthorizedError());
+    // }
 
     socket.chat = chat;
 

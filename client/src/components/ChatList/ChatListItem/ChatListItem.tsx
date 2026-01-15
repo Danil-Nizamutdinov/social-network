@@ -10,13 +10,17 @@ const ChatListItem: React.FC<{ chat: IChat }> = ({ chat }) => {
     <Link className={styles.link} to={`/chats/${chat.id}`}>
       <div className={styles.chat}>
         <img
-          src={urlStatic + chat.users[0].avatar}
+          src={urlStatic + chat.Users[0].avatar}
           alt="ava"
           className={styles.avatar}
         />
         <div>
-          <h1 className={styles.name}>{chat.users[0].login}</h1>
-          <p className={styles.last_message}>{chat.lastMessage}</p>
+          <h1 className={styles.name}>{chat.Users[0].login}</h1>
+          <p className={styles.last_message}>
+            {chat.Messages.length === 0
+              ? "Пока что нет сообщений"
+              : chat.Messages[0].content}
+          </p>
         </div>
       </div>
       <div className={styles.date}>{convertToReadableDate(chat.updatedAt)}</div>

@@ -1,0 +1,22 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  & img {
+    width: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+}
+
+.action {
+  & button {
+    margin-left: 15px;
+    padding: 10px;
+  }
+}

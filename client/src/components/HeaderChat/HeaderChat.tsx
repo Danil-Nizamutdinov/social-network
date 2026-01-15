@@ -27,17 +27,18 @@ const HeaderChat: React.FC<Props> = ({ userId, chatId }) => {
   };
 
   if (isLoading || !chat) return <Loading />;
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.header_message}>
         <ButtonImg img={arrow} handleOnClick={() => navigate(-1)} />
         <div className={styles.header_item}>
           <img
-            src={urlStatic + chat.users[0].avatar}
+            src={urlStatic + chat.Users[0].avatar}
             alt="ava"
             className={styles.ava}
           />
-          <h1 className={styles.login}>{chat.users[0].login}</h1>
+          <h1 className={styles.login}>{chat.Users[0].login}</h1>
         </div>
         <button
           className={styles.header_item}

@@ -6,7 +6,7 @@ import { isAxiosError } from "axios";
 import { toggleFalse } from "../toggleSlice";
 
 interface ArgLogin {
-  loginText: string;
+  email: string;
   password: string;
 }
 
@@ -27,9 +27,9 @@ export const loginStart = createAsyncThunk<
   {
     rejectValue: string;
   }
->("user/loginStart", async ({ loginText, password }, { rejectWithValue }) => {
+>("user/loginStart", async ({ email, password }, { rejectWithValue }) => {
   try {
-    const res = await authApi.loginStart(loginText, password);
+    const res = await authApi.loginStart(email, password);
     return res.data;
   } catch (error) {
     if (isAxiosError(error)) {

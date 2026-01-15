@@ -1,4 +1,3 @@
-const { Message, Chat } = require("../models/models");
 const messageService = require("../service/messageService");
 
 class ChatController {
